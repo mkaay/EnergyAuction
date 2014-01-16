@@ -1,4 +1,4 @@
-package de.tuhh.swp.team11.client;
+package de.tuhh.sts.team11.client;
 
 /**
  * Created by mkaay on 14.01.14.
@@ -6,9 +6,10 @@ package de.tuhh.swp.team11.client;
 
 import jade.core.Agent;
 
+
 public class UserAgent extends Agent {
     protected void setup() {
         // Printout a welcome message
-        System.out.println("Hello! UserAgent "+getAID().getName()+" is ready.");
+        System.out.println("Hello! UserAgent " + getAID().getName() + " is ready.");
     }
 }

@@ -1,16 +1,14 @@
-package de.tuhh.swp.team11.database;
+package de.tuhh.sts.team11.database;
 
 import org.garret.perst.Database;
 import org.garret.perst.Persistent;
 import org.garret.perst.Storage;
 import org.garret.perst.StorageFactory;
 
+
 /**
- * Created with IntelliJ IDEA.
- * User: mkaay
- * Date: 10.01.14
- * Time: 14:02
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: mkaay Date: 10.01.14 Time: 14:02 To change this template use File | Settings | File
+ * Templates.
  */
 public class PerstDatabase {
     class Subclass extends Persistent {
@@ -42,7 +40,8 @@ public class PerstDatabase {
         int zeitDelta;
         boolean kaufen;
 
-        AuctionData(String name, int energieMenge, String typ, long start, long ende, int preis, int preisDelta, int zeitDelta, boolean kaufen) {
+        AuctionData(String name, int energieMenge, String typ, long start, long ende, int preis, int preisDelta,
+                    int zeitDelta, boolean kaufen) {
             this.name = name;
             this.energieMenge = energieMenge;
             this.typ = typ;
@@ -203,8 +202,9 @@ public class PerstDatabase {
     // project root
 
     public static PerstDatabase INSTANCE() {
-        if (instance == null)
+        if (instance == null) {
             instance = new PerstDatabase(defaultDatabase);
+        }
         return instance;
     }
 

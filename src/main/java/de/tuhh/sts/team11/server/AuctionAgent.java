@@ -1,4 +1,4 @@
-package de.tuhh.swp.team11.server;
+package de.tuhh.sts.team11.server;
 
 /**
  * Created by mkaay on 14.01.14.
@@ -6,9 +6,10 @@ package de.tuhh.swp.team11.server;
 
 import jade.core.Agent;
 
+
 public class AuctionAgent extends Agent {
     protected void setup() {
         // Printout a welcome message
-        System.out.println("Hello! AuctionAgent "+getAID().getName()+" is ready.");
+        System.out.println("Hello! AuctionAgent " + getAID().getName() + " is ready.");
     }
 }
