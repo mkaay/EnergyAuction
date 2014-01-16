@@ -11,24 +11,7 @@ import org.garret.perst.StorageFactory;
  * Templates.
  */
 public class PerstDatabase {
-    class Subclass extends Persistent {
-        String name;
-
-        public Subclass(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-    }
-
-    class AuctionData extends Persistent {
+    public class AuctionData extends Persistent {
 
         String name;
         int energieMenge;
@@ -40,8 +23,9 @@ public class PerstDatabase {
         int zeitDelta;
         boolean kaufen;
 
-        AuctionData(String name, int energieMenge, String typ, long start, long ende, int preis, int preisDelta,
-                    int zeitDelta, boolean kaufen) {
+        protected AuctionData(String name, int energieMenge, String typ, long start, long ende, int preis,
+                              int preisDelta,
+                              int zeitDelta, boolean kaufen) {
             this.name = name;
             this.energieMenge = energieMenge;
             this.typ = typ;
@@ -129,12 +113,12 @@ public class PerstDatabase {
 
     }
 
-    class UserData extends Persistent {
+    public class UserData extends Persistent {
         String username;
         String email;
         String passwort;
 
-        UserData(String username, String email, String passwort) {
+        protected UserData(String username, String email, String passwort) {
             this.username = username;
             this.email = email;
             this.passwort = passwort;
@@ -167,11 +151,11 @@ public class PerstDatabase {
         }
     }
 
-    class BidData extends Persistent {
+    public class BidData extends Persistent {
         int preis;
         long zeit;
 
-        BidData(int preis, long zeit) {
+        protected BidData(int preis, long zeit) {
             this.preis = preis;
             this.zeit = zeit;
         }

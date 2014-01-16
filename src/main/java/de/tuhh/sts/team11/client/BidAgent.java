@@ -4,11 +4,10 @@ package de.tuhh.sts.team11.client;
  * Created by mkaay on 14.01.14.
  */
 
+import de.tuhh.sts.team11.util.Logger;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
-
-import java.util.logging.Logger;
 
 
 public class BidAgent extends Agent {
