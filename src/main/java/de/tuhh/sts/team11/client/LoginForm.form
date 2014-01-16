@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.tuhh.sts.team11.client.LoginForm">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FormLayout">
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:d:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <colspec value="fill:324px:grow"/>
+    <constraints>
+      <xy x="20" y="20" width="330" height="192"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="128e4" class="javax.swing.JTextField" binding="usernameField">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <forms top="0" left="20" bottom="0" right="20" defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <font size="14"/>
+        </properties>
+      </component>
+      <component id="468c4" class="javax.swing.JPasswordField" binding="passwordField">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+          <forms top="0" left="20" bottom="0" right="20" defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <font size="14"/>
+          <minimumSize width="14" height="25"/>
+          <preferredSize width="14" height="25"/>
+        </properties>
+      </component>
+      <component id="94be5" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms top="0" left="10" bottom="0" right="10"/>
+        </constraints>
+        <properties>
+          <font size="16" style="1"/>
+          <labelFor value="128e4"/>
+          <text value="Username:"/>
+        </properties>
+      </component>
+      <component id="febb7" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms top="0" left="10" bottom="0" right="10"/>
+        </constraints>
+        <properties>
+          <font size="16" style="1"/>
+          <labelFor value="468c4"/>
+          <text value="Password:"/>
+        </properties>
+      </component>
+      <component id="2e775" class="javax.swing.JButton" binding="loginButton">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <font size="16" style="1"/>
+          <text value="Login"/>
+        </properties>
+      </component>
+      <component id="40c86" class="javax.swing.JButton" binding="createNewAccountButton" default-binding="true">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms top="0" left="50" bottom="0" right="50"/>
+        </constraints>
+        <properties>
+          <text value="Create new Account"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

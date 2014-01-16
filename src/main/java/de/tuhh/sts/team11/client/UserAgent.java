@@ -46,9 +46,7 @@ public class UserAgent extends Agent {
             fe.printStackTrace();
         }
 
-        userGUI = new UserGUI();
-
-        login(new LoginData("mkaay", "test"));
+        userGUI = new UserGUI(this);
     }
 
     public void login(LoginData loginData) {
