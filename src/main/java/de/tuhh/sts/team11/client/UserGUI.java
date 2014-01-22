@@ -1,6 +1,7 @@
 package de.tuhh.sts.team11.client;
 
 import de.tuhh.sts.team11.database.PerstDatabase;
+import de.tuhh.sts.team11.protocol.AuctionData;
 import de.tuhh.sts.team11.util.Logger;
 
 import javax.swing.*;
@@ -17,11 +18,12 @@ public class UserGUI {
 
     private final UserAgent userAgent;
     private JFrame loginForm;
+    private JFrame searchForm;
 
     public UserGUI(final UserAgent userAgent) {
         this.userAgent = userAgent;
 
-        loginForm = LoginForm.createForm();
+        searchForm = SearchGUI.createForm(this);
     }
 
     public void loginSuccess(final PerstDatabase.UserData userData) {
@@ -30,5 +32,13 @@ public class UserGUI {
 
     public void loginFailed() {
         LOG.info("Login fail");
+    }
+
+    public void newAuction() {
+        NewAuction.createForm(this);
+    }
+
+    public void createAuction(AuctionData auctionData) {
+        userAgent.createAuction(auctionData);
     }
 }

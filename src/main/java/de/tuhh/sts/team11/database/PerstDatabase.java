@@ -1,5 +1,6 @@
 package de.tuhh.sts.team11.database;
 
+import de.tuhh.sts.team11.protocol.AuctionData;
 import org.garret.perst.Database;
 import org.garret.perst.Persistent;
 import org.garret.perst.Storage;
@@ -11,107 +12,6 @@ import org.garret.perst.StorageFactory;
  * Templates.
  */
 public class PerstDatabase {
-    public class AuctionData extends Persistent {
-
-        String name;
-        int energieMenge;
-        String typ;
-        long start;
-        long ende;
-        int preis;
-        int preisDelta;
-        int zeitDelta;
-        boolean kaufen;
-
-        protected AuctionData(String name, int energieMenge, String typ, long start, long ende, int preis,
-                              int preisDelta,
-                              int zeitDelta, boolean kaufen) {
-            this.name = name;
-            this.energieMenge = energieMenge;
-            this.typ = typ;
-            this.start = start;
-            this.ende = ende;
-            this.preis = preis;
-            this.preisDelta = preisDelta;
-            this.zeitDelta = zeitDelta;
-            this.kaufen = kaufen;
-
-            PerstDatabase.INSTANCE().getDB().addRecord(this);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String value) {
-            this.name = value;
-        }
-
-        int getEnergieMenge() {
-            return energieMenge;
-        }
-
-        void setEnergieMenge(int energieMenge) {
-            this.energieMenge = energieMenge;
-        }
-
-        String getTyp() {
-            return typ;
-        }
-
-        void setTyp(String typ) {
-            this.typ = typ;
-        }
-
-        long getStart() {
-            return start;
-        }
-
-        void setStart(long start) {
-            this.start = start;
-        }
-
-        long getEnde() {
-            return ende;
-        }
-
-        void setEnde(long ende) {
-            this.ende = ende;
-        }
-
-        int getPreis() {
-            return preis;
-        }
-
-        void setPreis(int preis) {
-            this.preis = preis;
-        }
-
-        int getPreisDelta() {
-            return preisDelta;
-        }
-
-        void setPreisDelta(int preisDelta) {
-            this.preisDelta = preisDelta;
-        }
-
-        int getZeitDelta() {
-            return zeitDelta;
-        }
-
-        void setZeitDelta(int zeitDelta) {
-            this.zeitDelta = zeitDelta;
-        }
-
-        boolean isKaufen() {
-            return kaufen;
-        }
-
-        void setKaufen(boolean kaufen) {
-            this.kaufen = kaufen;
-        }
-
-    }
 
     public class UserData extends Persistent {
         String username;

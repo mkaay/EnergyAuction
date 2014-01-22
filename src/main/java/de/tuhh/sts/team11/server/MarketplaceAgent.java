@@ -4,6 +4,7 @@ package de.tuhh.sts.team11.server;
  * Created by mkaay on 14.01.14.
  */
 
+import de.tuhh.sts.team11.protocol.AuctionData;
 import de.tuhh.sts.team11.protocol.LoginData;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.Agent;
@@ -22,6 +23,8 @@ public class MarketplaceAgent extends Agent {
 
     private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
             ("login"), MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+    private static final MessageTemplate CREATE_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
+            ("auctioncreate"), MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
 
     protected void setup() {
         LOG.info("Registering Marketplace (" + getAID().getName() + ")");
@@ -40,6 +43,7 @@ public class MarketplaceAgent extends Agent {
         }
 
         addBehaviour(new LoginHandler(this));
+        addBehaviour(new CreateHandler(this));
     }
 
     protected void takeDown() {
@@ -71,7 +75,31 @@ public class MarketplaceAgent extends Agent {
                 reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 send(reply);
             } catch (UnreadableException e) {
-                LOG.warning("corrup LoginData", e);
+                LOG.warning("corrupt LoginData", e);
+            }
+        }
+    }
+
+    class CreateHandler extends MsgReceiver {
+        public CreateHandler(MarketplaceAgent agent) {
+            super(agent, CREATE_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
+        }
+
+        @Override
+        protected void handleMessage(final ACLMessage msg) {
+            if (msg == null) {
+                LOG.info("got null message");
+                return;
+            }
+
+            try {
+                AuctionData auctionData = (AuctionData) msg.getContentObject();
+                LOG.info(String.format("New Auction %s", auctionData.getName()));
+                ACLMessage reply = msg.createReply();
+                reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                send(reply);
+            } catch (UnreadableException e) {
+                LOG.warning("corrupt AuctionData", e);
             }
         }
     }

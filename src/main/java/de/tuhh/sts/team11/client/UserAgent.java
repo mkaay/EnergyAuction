@@ -5,10 +5,12 @@ package de.tuhh.sts.team11.client;
  */
 
 import de.tuhh.sts.team11.database.PerstDatabase;
+import de.tuhh.sts.team11.protocol.AuctionData;
 import de.tuhh.sts.team11.protocol.LoginData;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -24,6 +26,9 @@ public class UserAgent extends Agent {
 
     private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
             ("login"), MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL),
+            MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)));
+    private static final MessageTemplate CREATE_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
+            ("auctioncreate"), MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL),
             MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)));
 
     private UserGUI userGUI;
@@ -63,6 +68,20 @@ public class UserAgent extends Agent {
         }
     }
 
+    public void createAuction(AuctionData auctionData) {
+        ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+        try {
+            msg.setOntology("auctioncreate");
+            msg.setContentObject(auctionData);
+            msg.addReceiver(marketplace);
+
+            addBehaviour(new CreateHandler(this));
+            send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     class LoginHandler extends MsgReceiver {
         Agent agent;
 
@@ -84,6 +103,31 @@ public class UserAgent extends Agent {
                 } catch (UnreadableException e) {
                     LOG.severe("UserData corrupted", e);
                 }
+            } else {
+                userGUI.loginFailed();
+            }
+
+            agent.removeBehaviour(this);
+        }
+    }
+
+    private class CreateHandler extends MsgReceiver {
+        Agent agent;
+
+        public CreateHandler(Agent agent) {
+            super(agent, CREATE_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
+            this.agent = agent;
+        }
+
+        @Override
+        protected void handleMessage(final ACLMessage msg) {
+            if (msg == null) {
+                LOG.info("got null message");
+                return;
+            }
+
+            if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                LOG.info("Success");
             } else {
                 userGUI.loginFailed();
             }
