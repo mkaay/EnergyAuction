@@ -1,10 +1,10 @@
 package de.tuhh.sts.team11.client;
 
-import de.tuhh.sts.team11.protocol.AuctionData;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,7 +14,10 @@ import java.util.Vector;
  * Created by mkaay on 21.01.14.
  */
 public class NewAuction {
-    private JPanel panel1;
+    private final JFrame frame = new JFrame("New Auction");
+    private final UserGUI gui;
+
+    private JPanel contentPane;
     private JTextField nameField;
     private JSpinner amountSpinner;
     private JComboBox typeSelect;
@@ -24,8 +27,6 @@ public class NewAuction {
     private JSpinner timeDeltaSpinner;
     private JSpinner endTimeSpinner;
     private JButton createButton;
-
-    private final UserGUI gui;
 
     public NewAuction(UserGUI userGUI) {
         gui = userGUI;
@@ -53,24 +54,68 @@ public class NewAuction {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                gui.createAuction(toData());
+                submit();
+            }
+        });
+
+        frame.setContentPane(contentPane);
+        frame.pack();
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                cancel();
             }
         });
     }
 
-    public AuctionData toData() {
-        String type = typeSelect.getSelectedIndex() == 0 ? "dutch" : "reversedutch";
-        boolean direction = directionSelect.getSelectedIndex() == 0;
-
-        AuctionData data = new AuctionData(nameField.getText(), (Integer) amountSpinner.getValue(), type, GregorianCalendar.getInstance().getTime(), (Date) endTimeSpinner.getModel().getValue(), (Integer) priceSpinner.getValue(), (Integer) priceDeltaSpinner.getValue(), (Integer) timeDeltaSpinner.getValue(), direction);
-        return data;
+    private void closeFrame() {
+        frame.setVisible(false);
+        frame.dispose();
     }
 
-    public static JFrame createForm(UserGUI userGUI) {
-        JFrame frame = new JFrame("New Auction");
-        frame.setContentPane(new NewAuction(userGUI).panel1);
-        frame.pack();
-        frame.setVisible(true);
-        return frame;
+    private void cancel() {
+        closeFrame();
+
+        gui.loginClosed();
+    }
+
+    private void submit() {
+        closeFrame();
+
+        gui.createAuction(getName(), getAmount(), getPrice(), getType(), getDirection(), getEndTime(),
+                getPriceDelta(), getTimeDelta());
+    }
+
+    private Integer getTimeDelta() {
+        return (Integer) timeDeltaSpinner.getValue();
+    }
+
+    private Integer getPriceDelta() {
+        return (Integer) priceDeltaSpinner.getValue();
+    }
+
+    private Integer getPrice() {
+        return (Integer) priceSpinner.getValue();
+    }
+
+    private Date getEndTime() {
+        return (Date) endTimeSpinner.getModel().getValue();
+    }
+
+    private String getDirection() {
+        return directionSelect.getSelectedIndex() == 0 ? "buy" : "sell";
+    }
+
+    private String getType() {
+        return typeSelect.getSelectedIndex() == 0 ? "dutch" : "reversedutch";
+    }
+
+    private Integer getAmount() {
+        return (Integer) amountSpinner.getValue();
+    }
+
+    private String getName() {
+        return nameField.getText();
     }
 }

@@ -1,34 +1,43 @@
 package de.tuhh.sts.team11.protocol;
 
+import org.garret.perst.Persistent;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
 * Created by mkaay on 21.01.14.
 */
-public class AuctionData implements Serializable {
-    String name;
-    int energieMenge;
-    String typ;
-    Date start;
-    Date ende;
-    int preis;
-    int preisDelta;
-    int zeitDelta;
-    boolean kaufen;
+public class AuctionData extends Persistent implements Serializable {
+    public enum Type {DUTCH, REVERSE_DUTCH}
 
-    public AuctionData(String name, int energieMenge, String typ, Date start, Date ende, int preis,
-                       int preisDelta,
-                       int zeitDelta, boolean kaufen) {
+    ;
+
+    public enum Direction {BUY, SELL}
+
+    ;
+
+    private String name;
+    private int amount;
+    private Type type;
+    private Date startTime;
+    private Date endTime;
+    private int price;
+    private int priceDelta;
+    private int timeDelta;
+    private Direction direction;
+
+    public AuctionData(String name, int amount, Type type, Date start, Date end, int price, int priceDelta,
+                       int timeDelta, Direction direction) {
         this.name = name;
-        this.energieMenge = energieMenge;
-        this.typ = typ;
-        this.start = start;
-        this.ende = ende;
-        this.preis = preis;
-        this.preisDelta = preisDelta;
-        this.zeitDelta = zeitDelta;
-        this.kaufen = kaufen;
+        this.amount = amount;
+        this.type = type;
+        this.startTime = start;
+        this.endTime = end;
+        this.price = price;
+        this.priceDelta = priceDelta;
+        this.timeDelta = timeDelta;
+        this.direction = direction;
     }
 
     public String getName() {
@@ -39,68 +48,67 @@ public class AuctionData implements Serializable {
         this.name = value;
     }
 
-    int getEnergieMenge() {
-        return energieMenge;
+    int getAmount() {
+        return amount;
     }
 
-    void setEnergieMenge(int energieMenge) {
-        this.energieMenge = energieMenge;
+    void setAmount(int amount) {
+        this.amount = amount;
     }
 
-    String getTyp() {
-        return typ;
+    Type getType() {
+        return type;
     }
 
-    void setTyp(String typ) {
-        this.typ = typ;
+    void setType(Type type) {
+        this.type = type;
     }
 
-    Date getStart() {
-        return start;
+    Date getStartTime() {
+        return startTime;
     }
 
-    void setStart(Date start) {
-        this.start = start;
+    void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
-    Date getEnde() {
-        return ende;
+    Date getEndTime() {
+        return endTime;
     }
 
-    void setEnde(Date ende) {
-        this.ende = ende;
+    void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
-    int getPreis() {
-        return preis;
+    int getPrice() {
+        return price;
     }
 
-    void setPreis(int preis) {
-        this.preis = preis;
+    void setPrice(int price) {
+        this.price = price;
     }
 
-    int getPreisDelta() {
-        return preisDelta;
+    int getPriceDelta() {
+        return priceDelta;
     }
 
-    void setPreisDelta(int preisDelta) {
-        this.preisDelta = preisDelta;
+    void setPriceDelta(int priceDelta) {
+        this.priceDelta = priceDelta;
     }
 
-    int getZeitDelta() {
-        return zeitDelta;
+    int getTimeDelta() {
+        return timeDelta;
     }
 
-    void setZeitDelta(int zeitDelta) {
-        this.zeitDelta = zeitDelta;
+    void setTimeDelta(int timeDelta) {
+        this.timeDelta = timeDelta;
     }
 
-    boolean isKaufen() {
-        return kaufen;
+    public Direction getDirection() {
+        return direction;
     }
 
-    void setKaufen(boolean kaufen) {
-        this.kaufen = kaufen;
+    void setDirection(Direction direction) {
+        this.direction = direction;
     }
-
 }

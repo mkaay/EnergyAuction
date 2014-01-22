@@ -27,26 +27,41 @@ public class SearchGUI {
             @Override
             public String getColumnName(int i) {
                 switch (i) {
-                    case 0: return "Name";
-                    case 1: return "Menge";
-                    case 2: return "Typ";
-                    case 3: return "Ende";
-                    case 4: return "Preis";
-                    case 5: return "An-/Verkauf";
-                    default: return "";
+                    case 0:
+                        return "Name";
+                    case 1:
+                        return "Menge";
+                    case 2:
+                        return "Typ";
+                    case 3:
+                        return "Ende";
+                    case 4:
+                        return "Preis";
+                    case 5:
+                        return "An-/Verkauf";
+                    default:
+                        return "";
                 }
             }
 
-            public int getColumnCount() { return 8; }
-            public int getRowCount() { return 10;}
-            public Object getValueAt(int row, int col) { return new Integer(row*col); }
+            public int getColumnCount() {
+                return 8;
+            }
+
+            public int getRowCount() {
+                return 10;
+            }
+
+            public Object getValueAt(int row, int col) {
+                return new Integer(row * col);
+            }
         };
         auctionList.setModel(dataModel);
 
         newAuctionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                gui.newAuction();
+                gui.showNewAuction();
             }
         });
     }

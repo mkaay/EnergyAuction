@@ -5,7 +5,9 @@ package de.tuhh.sts.team11.server;
  */
 
 import de.tuhh.sts.team11.protocol.AuctionData;
-import de.tuhh.sts.team11.protocol.LoginData;
+import de.tuhh.sts.team11.protocol.LoginOperation;
+import de.tuhh.sts.team11.protocol.LoginSuccessReply;
+import de.tuhh.sts.team11.protocol.UserData;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -17,14 +19,22 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.states.MsgReceiver;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class MarketplaceAgent extends Agent {
     private static final Logger LOG = Logger.getLogger(MarketplaceAgent.class.getName());
 
-    private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
-            ("login"), MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
-    private static final MessageTemplate CREATE_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
-            ("auctioncreate"), MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+    private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("account");
+    private static final MessageTemplate AUCTION_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("auction");
+
+    private final List<String> authorizedUsers;
+
+    public MarketplaceAgent() {
+        authorizedUsers = new LinkedList<String>();
+    }
 
     protected void setup() {
         LOG.info("Registering Marketplace (" + getAID().getName() + ")");
@@ -43,7 +53,7 @@ public class MarketplaceAgent extends Agent {
         }
 
         addBehaviour(new LoginHandler(this));
-        addBehaviour(new CreateHandler(this));
+        addBehaviour(new AuctionHandler(this));
     }
 
     protected void takeDown() {
@@ -68,21 +78,30 @@ public class MarketplaceAgent extends Agent {
                 return;
             }
 
+
             try {
-                LoginData loginData = (LoginData) msg.getContentObject();
-                LOG.info(String.format("Login for user %s", loginData.getUsername()));
-                ACLMessage reply = msg.createReply();
-                reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                send(reply);
+                Object content = msg.getContentObject();
+
+                if (content instanceof LoginOperation && msg.getPerformative() == ACLMessage.PROPOSE) {
+                    LoginOperation loginOperation = (LoginOperation) content;
+                    LOG.info(String.format("Login for user %s", loginOperation.getUsername()));
+                    ACLMessage reply = msg.createReply();
+                    reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    reply.setContentObject(new LoginSuccessReply(new UserData(loginOperation.getUsername(), "",
+                            loginOperation.getPassword())));
+                    send(reply);
+                }
             } catch (UnreadableException e) {
-                LOG.warning("corrupt LoginData", e);
+                LOG.warning("corrupt message", e);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    class CreateHandler extends MsgReceiver {
-        public CreateHandler(MarketplaceAgent agent) {
-            super(agent, CREATE_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
+    class AuctionHandler extends MsgReceiver {
+        public AuctionHandler(MarketplaceAgent agent) {
+            super(agent, AUCTION_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
         }
 
         @Override

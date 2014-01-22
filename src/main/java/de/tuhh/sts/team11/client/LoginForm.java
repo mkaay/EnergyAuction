@@ -5,6 +5,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -14,8 +16,11 @@ import java.awt.event.ActionListener;
  * @since 1/16/14
  */
 public class LoginForm {
+    private final JFrame frame = new JFrame("Login");
+    private final UserGUI gui;
+
     private JTextField usernameField;
-    private JPanel panel1;
+    private JPanel contentPane;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton createNewAccountButton;
@@ -39,7 +44,13 @@ public class LoginForm {
         public abstract void textChanged(final DocumentEvent e);
     }
 
-    private LoginForm() {
+    public LoginForm(final UserGUI userGUI) {
+        this(userGUI, "");
+    }
+
+    public LoginForm(final UserGUI userGUI, final String username) {
+        this.gui = userGUI;
+
         loginButton.setEnabled(false);
 
         ActionListener actionListener = new ActionListener() {
@@ -64,11 +75,21 @@ public class LoginForm {
 
         usernameField.getDocument().addDocumentListener(textChangedListener);
         passwordField.getDocument().addDocumentListener(textChangedListener);
+
+        usernameField.setText(username);
+
+        frame.setContentPane(contentPane);
+        frame.pack();
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                cancel();
+            }
+        });
     }
 
     private void handleLogin() {
-        enableForm(false);
-        loginButton.setEnabled(false);
     }
 
     private void enableForm(final boolean enable) {
@@ -76,12 +97,20 @@ public class LoginForm {
         passwordField.setEnabled(enable);
     }
 
-    public static JFrame createForm() {
-        JFrame frame = new JFrame("Login");
-        frame.setContentPane(new LoginForm().panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        return frame;
+    private void closeFrame() {
+        frame.setVisible(false);
+        frame.dispose();
+    }
+
+    private void cancel() {
+        closeFrame();
+
+        gui.loginClosed();
+    }
+
+    private void submit() {
+        closeFrame();
+
+        gui.login(usernameField.getText(), passwordField.getText());
     }
 }

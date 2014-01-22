@@ -4,13 +4,15 @@ package de.tuhh.sts.team11.client;
  * Created by mkaay on 14.01.14.
  */
 
-import de.tuhh.sts.team11.database.PerstDatabase;
 import de.tuhh.sts.team11.protocol.AuctionData;
-import de.tuhh.sts.team11.protocol.LoginData;
+import de.tuhh.sts.team11.protocol.LoginFailedReply;
+import de.tuhh.sts.team11.protocol.LoginOperation;
+import de.tuhh.sts.team11.protocol.LoginSuccessReply;
+import de.tuhh.sts.team11.protocol.NewAccountOperation;
+import de.tuhh.sts.team11.protocol.NewAuctionOperation;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -20,16 +22,15 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.states.MsgReceiver;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 
 public class UserAgent extends Agent {
     private static final Logger LOG = Logger.getLogger(UserAgent.class.getName());
 
-    private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
-            ("login"), MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL),
-            MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)));
-    private static final MessageTemplate CREATE_MESSAGE_TEMPLATE = MessageTemplate.and(MessageTemplate.MatchOntology
-            ("auctioncreate"), MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL),
-            MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL)));
+    private static final MessageTemplate ACCOUNT_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("account");
+    private static final MessageTemplate AUCTION_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("auction");
 
     private UserGUI userGUI;
 
@@ -52,41 +53,61 @@ public class UserAgent extends Agent {
         }
 
         userGUI = new UserGUI(this);
+
+        addBehaviour(new AccountHandler(this));
+        addBehaviour(new AuctionHandler(this));
     }
 
-    public void login(LoginData loginData) {
+    public void login(String username, String password) {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
-            msg.setOntology("login");
-            msg.setContentObject(loginData);
+            msg.setOntology("account");
+            msg.setContentObject(new LoginOperation(username, password));
             msg.addReceiver(marketplace);
-
-            addBehaviour(new LoginHandler(this));
             send(msg);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void createAuction(AuctionData auctionData) {
+    public void createNewAccount(final String email, final String username, final String password) {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
-            msg.setOntology("auctioncreate");
-            msg.setContentObject(auctionData);
+            msg.setOntology("account");
+            msg.setContentObject(new NewAccountOperation(email, username, password));
             msg.addReceiver(marketplace);
-
-            addBehaviour(new CreateHandler(this));
             send(msg);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    class LoginHandler extends MsgReceiver {
+    public void createAuction(final String name, final Integer amount, final Integer price, final String type, final
+    String direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
+        final AuctionData.Type auctionType = type == "dutch" ? AuctionData.Type.DUTCH : AuctionData.Type.REVERSE_DUTCH;
+        final Date startTime = GregorianCalendar.getInstance().getTime();
+        final AuctionData.Direction auctionDirection =
+                direction == "buy" ? AuctionData.Direction.BUY : AuctionData.Direction.SELL;
+
+        AuctionData auctionData = new AuctionData(name, amount, auctionType, startTime, endTime, price, priceDelta,
+                timeDelta, auctionDirection);
+
+        ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+        try {
+            msg.setOntology("auction");
+            msg.setContentObject(new NewAuctionOperation(auctionData));
+            msg.addReceiver(marketplace);
+            send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    class AccountHandler extends MsgReceiver {
         Agent agent;
 
-        public LoginHandler(Agent agent) {
-            super(agent, LOGIN_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
+        public AccountHandler(Agent agent) {
+            super(agent, ACCOUNT_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
             this.agent = agent;
         }
 
@@ -97,25 +118,26 @@ public class UserAgent extends Agent {
                 return;
             }
 
-            if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                try {
-                    userGUI.loginSuccess((PerstDatabase.UserData) msg.getContentObject());
-                } catch (UnreadableException e) {
-                    LOG.severe("UserData corrupted", e);
+            try {
+                final Object content = msg.getContentObject();
+                if (content instanceof LoginSuccessReply && msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                    //TODO
+                } else if (content instanceof LoginFailedReply && msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
+                    final LoginFailedReply loginFailedReply = (LoginFailedReply) content;
+
+                    userGUI.loginFailed(loginFailedReply.getUsername());
                 }
-            } else {
-                userGUI.loginFailed();
+            } catch (UnreadableException e) {
+                LOG.severe("message corrupted", e);
             }
-
-            agent.removeBehaviour(this);
         }
     }
 
-    private class CreateHandler extends MsgReceiver {
+    private class AuctionHandler extends MsgReceiver {
         Agent agent;
 
-        public CreateHandler(Agent agent) {
-            super(agent, CREATE_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
+        public AuctionHandler(Agent agent) {
+            super(agent, AUCTION_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
             this.agent = agent;
         }
 
@@ -126,13 +148,17 @@ public class UserAgent extends Agent {
                 return;
             }
 
-            if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                LOG.info("Success");
-            } else {
-                userGUI.loginFailed();
-            }
+            try {
+                final Object content = msg.getContentObject();
 
-            agent.removeBehaviour(this);
+                if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                    //TODO
+                } else if (msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
+                    //TODO
+                }
+            } catch (UnreadableException e) {
+                LOG.severe("message corrupted", e);
+            }
         }
     }
 }

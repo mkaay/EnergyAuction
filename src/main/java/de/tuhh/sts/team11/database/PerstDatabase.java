@@ -1,6 +1,7 @@
 package de.tuhh.sts.team11.database;
 
 import de.tuhh.sts.team11.protocol.AuctionData;
+import de.tuhh.sts.team11.protocol.UserData;
 import org.garret.perst.Database;
 import org.garret.perst.Persistent;
 import org.garret.perst.Storage;
@@ -12,44 +13,6 @@ import org.garret.perst.StorageFactory;
  * Templates.
  */
 public class PerstDatabase {
-
-    public class UserData extends Persistent {
-        String username;
-        String email;
-        String passwort;
-
-        protected UserData(String username, String email, String passwort) {
-            this.username = username;
-            this.email = email;
-            this.passwort = passwort;
-
-            PerstDatabase.INSTANCE().getDB().addRecord(this);
-        }
-
-        String getUsername() {
-            return username;
-        }
-
-        void setUsername(String username) {
-            this.username = username;
-        }
-
-        String getEmail() {
-            return email;
-        }
-
-        void setEmail(String email) {
-            this.email = email;
-        }
-
-        String getPasswort() {
-            return passwort;
-        }
-
-        void setPasswort(String passwort) {
-            this.passwort = passwort;
-        }
-    }
 
     public class BidData extends Persistent {
         int preis;
@@ -113,7 +76,6 @@ public class PerstDatabase {
         db.dropTable(BidData.class);
         db.commitTransaction();
         storage.close();
-
     }
 
     private void retrieveData() {
