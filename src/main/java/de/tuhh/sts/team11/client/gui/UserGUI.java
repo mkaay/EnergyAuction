@@ -1,5 +1,6 @@
-package de.tuhh.sts.team11.client;
+package de.tuhh.sts.team11.client.gui;
 
+import de.tuhh.sts.team11.client.UserAgent;
 import de.tuhh.sts.team11.util.Logger;
 
 import javax.swing.*;

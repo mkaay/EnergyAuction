@@ -1,4 +1,4 @@
-package de.tuhh.sts.team11.client;
+package de.tuhh.sts.team11.client.gui;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

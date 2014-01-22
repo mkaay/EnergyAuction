@@ -4,6 +4,7 @@ package de.tuhh.sts.team11.client;
  * Created by mkaay on 14.01.14.
  */
 
+import de.tuhh.sts.team11.client.gui.UserGUI;
 import de.tuhh.sts.team11.protocol.AuctionData;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
