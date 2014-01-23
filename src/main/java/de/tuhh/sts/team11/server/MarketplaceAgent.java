@@ -4,14 +4,8 @@ package de.tuhh.sts.team11.server;
  * Created by mkaay on 14.01.14.
  */
 
-import de.tuhh.sts.team11.protocol.CreateAccountFailedReply;
-import de.tuhh.sts.team11.protocol.CreateAccountOperation;
-import de.tuhh.sts.team11.protocol.CreateAuctionFailedReply;
-import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
-import de.tuhh.sts.team11.protocol.CreateAuctionSuccessReply;
-import de.tuhh.sts.team11.protocol.LoginFailedReply;
-import de.tuhh.sts.team11.protocol.LoginOperation;
-import de.tuhh.sts.team11.protocol.LoginSuccessReply;
+import de.tuhh.sts.team11.protocol.*;
+import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.server.database.PerstDatabase;
 import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.server.exceptions.UsernameAlreadyTakenException;
@@ -28,6 +22,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -150,26 +145,57 @@ public class MarketplaceAgent extends Agent {
             try {
                 Object content = msg.getContentObject();
 
-                ACLMessage reply = msg.createReply();
-
                 if (content instanceof CreateAuctionOperation) {
+                    ACLMessage reply = msg.createReply();
+
                     if (aidToUser.containsKey(msg.getSender())) {
+                        LOG.info("Creating new auction");
+
+                        CreateAuctionOperation o = (CreateAuctionOperation) content;
+                        PerstDatabase.INSTANCE().createAuction(o.getName(), o.getAmount(), o.getPrice(),
+                                o.getAuctionType(), o.getAuctionDirection(), o.getEndTime(), o.getPriceDelta(),
+                                o.getTimeDelta());
+
                         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                         reply.setContentObject(new CreateAuctionSuccessReply());
-                        LOG.info("Creating new auction");
+
+                        ACLMessage message = createAuctionListMessage();
+                        for (AID aid : aidToUser.keySet()) {
+                            message.addReceiver(aid);
+                        }
+
+                        send(message);
                     } else {
                         reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
                         reply.setContentObject(new CreateAuctionFailedReply("not logged in"));
                         LOG.info("User not logged in");
                     }
-                }
 
-                send(reply);
+                    send(reply);
+                } else if (content instanceof ListAuctionsOperation) {
+                    ACLMessage message = createAuctionListMessage();
+                    message.addReceiver(msg.getSender());
+                    send(message);
+                }
             } catch (UnreadableException e) {
                 LOG.warning("corrupt message", e);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private ACLMessage createAuctionListMessage() throws IOException {
+        ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+        message.setOntology("auction");
+
+        List<AuctionData> auctions = new ArrayList<AuctionData>();
+        for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
+            auctions.add(auctionData);
+        }
+
+        message.setContentObject(new ListAuctionsReply(auctions));
+
+        return message;
     }
 }

@@ -6,7 +6,11 @@ package de.tuhh.sts.team11.client;
 
 import de.tuhh.sts.team11.client.gui.UserGUI;
 import de.tuhh.sts.team11.protocol.CreateAccountOperation;
+import de.tuhh.sts.team11.protocol.CreateAuctionFailedReply;
 import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
+import de.tuhh.sts.team11.protocol.CreateAuctionSuccessReply;
+import de.tuhh.sts.team11.protocol.ListAuctionsOperation;
+import de.tuhh.sts.team11.protocol.ListAuctionsReply;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
@@ -97,6 +101,18 @@ public class UserAgent extends Agent {
         }
     }
 
+    public void refreshAuctions() {
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        try {
+            msg.setOntology("auction");
+            msg.setContentObject(new ListAuctionsOperation());
+            msg.addReceiver(marketplace);
+            send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     class AccountHandler extends MessageReceiver {
         public AccountHandler(Agent agent) {
             super(agent, ACCOUNT_MESSAGE_TEMPLATE);
@@ -129,9 +145,14 @@ public class UserAgent extends Agent {
             try {
                 final Object content = msg.getContentObject();
 
-                if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                if (content instanceof ListAuctionsReply) {
+                    LOG.info("Got auctions");
+                    ListAuctionsReply reply = (ListAuctionsReply) content;
+                    userGUI.setAuctionList(reply.getAuctions());
+                } else if (content instanceof CreateAuctionSuccessReply && msg.getPerformative() == ACLMessage
+                        .ACCEPT_PROPOSAL) {
                     //TODO
-                } else if (msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
+                } else if (content instanceof CreateAuctionFailedReply && msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                     //TODO
                 }
             } catch (UnreadableException e) {

@@ -2,9 +2,14 @@ package de.tuhh.sts.team11.server.database;
 
 import de.tuhh.sts.team11.server.exceptions.UsernameAlreadyTakenException;
 import de.tuhh.sts.team11.util.Logger;
+import de.tuhh.sts.team11.util.Types;
 import org.garret.perst.Database;
+import org.garret.perst.IterableIterator;
 import org.garret.perst.Storage;
 import org.garret.perst.StorageFactory;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -59,5 +64,24 @@ public class PerstDatabase {
 
         db.commitTransaction();
         return userData;
+    }
+
+    public AuctionData createAuction(final String name, final Integer amount, final Integer price,
+                                     final Types.AuctionType
+                                             auctionType, final Types.AuctionDirection auctionDirection,
+                                     final Date endTime, final Integer priceDelta,
+                                     final Integer timeDelta) {
+        Date startTime = GregorianCalendar.getInstance().getTime();
+        AuctionData auctionData = new AuctionData(name, amount, price, auctionType, auctionDirection, startTime,
+                endTime, priceDelta, timeDelta);
+        db.beginTransaction();
+        db.addRecord(auctionData);
+        db.commitTransaction();
+
+        return auctionData;
+    }
+
+    public IterableIterator<AuctionData> getAuctions() {
+        return db.getRecords(AuctionData.class);
     }
 }

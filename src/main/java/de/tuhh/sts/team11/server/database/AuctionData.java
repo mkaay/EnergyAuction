@@ -21,18 +21,23 @@ public class AuctionData extends Persistent implements Serializable {
     private int timeDelta;
     private Types.AuctionDirection auctionDirection;
 
-    public AuctionData(String name, int amount, Types.AuctionType auctionType, Date start, Date end, int price,
-                       int priceDelta,
-                       int timeDelta, Types.AuctionDirection auctionDirection) {
+    public AuctionData(final String name, final Integer amount, final Integer price, final Types.AuctionType
+            auctionType, final Types.AuctionDirection auctionDirection, final Date startTime, final Date endTime,
+                       final Integer priceDelta,
+                       final Integer timeDelta) {
         this.name = name;
         this.amount = amount;
         this.auctionType = auctionType;
-        this.startTime = start;
-        this.endTime = end;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.price = price;
         this.priceDelta = priceDelta;
         this.timeDelta = timeDelta;
         this.auctionDirection = auctionDirection;
+    }
+
+    public AuctionData() {
+
     }
 
     public String getName() {
@@ -43,59 +48,59 @@ public class AuctionData extends Persistent implements Serializable {
         this.name = value;
     }
 
-    int getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    void setAmount(int amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
-    Types.AuctionType getAuctionType() {
+    public Types.AuctionType getAuctionType() {
         return auctionType;
     }
 
-    void setAuctionType(Types.AuctionType auctionType) {
+    public void setAuctionType(Types.AuctionType auctionType) {
         this.auctionType = auctionType;
     }
 
-    Date getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    void setStartTime(Date startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
-    Date getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    void setEndTime(Date endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
-    int getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    void setPrice(int price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    int getPriceDelta() {
+    public int getPriceDelta() {
         return priceDelta;
     }
 
-    void setPriceDelta(int priceDelta) {
+    public void setPriceDelta(int priceDelta) {
         this.priceDelta = priceDelta;
     }
 
-    int getTimeDelta() {
+    public int getTimeDelta() {
         return timeDelta;
     }
 
-    void setTimeDelta(int timeDelta) {
+    public void setTimeDelta(int timeDelta) {
         this.timeDelta = timeDelta;
     }
 
@@ -103,7 +108,7 @@ public class AuctionData extends Persistent implements Serializable {
         return auctionDirection;
     }
 
-    void setAuctionDirection(Types.AuctionDirection auctionDirection) {
+    public void setAuctionDirection(Types.AuctionDirection auctionDirection) {
         this.auctionDirection = auctionDirection;
     }
 }

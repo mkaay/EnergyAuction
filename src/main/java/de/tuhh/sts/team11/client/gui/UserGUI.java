@@ -1,10 +1,12 @@
 package de.tuhh.sts.team11.client.gui;
 
 import de.tuhh.sts.team11.client.UserAgent;
+import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.Types;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -17,6 +19,7 @@ public class UserGUI {
     private static final Logger LOG = Logger.getLogger(UserAgent.class.getName());
 
     private final UserAgent userAgent;
+    private SearchGUI searchGUI;
 
     public UserGUI(final UserAgent userAgent) {
         this.userAgent = userAgent;
@@ -34,6 +37,10 @@ public class UserGUI {
     public void loginFailed(String username) {
         LOG.info("Login failed");
         showLogin(username);
+    }
+
+    public void setAuctionList(final List<AuctionData> auctions) {
+        searchGUI.setAuctionList(auctions);
     }
 
     // windows
@@ -60,7 +67,8 @@ public class UserGUI {
 
     public void showSearchWindow() {
         LOG.info("show search");
-        new SearchGUI(this);
+        searchGUI = new SearchGUI(this);
+        userAgent.refreshAuctions();
     }
 
     // events
