@@ -1,4 +1,4 @@
-package de.tuhh.sts.team11.protocol;
+package de.tuhh.sts.team11.server.database;
 
 import org.garret.perst.Persistent;
 
@@ -11,11 +11,7 @@ import java.util.Date;
 public class AuctionData extends Persistent implements Serializable {
     public enum Type {DUTCH, REVERSE_DUTCH}
 
-    ;
-
     public enum Direction {BUY, SELL}
-
-    ;
 
     private String name;
     private int amount;

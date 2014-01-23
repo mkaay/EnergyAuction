@@ -1,5 +1,7 @@
 package de.tuhh.sts.team11.protocol;
 
+import de.tuhh.sts.team11.server.database.AuctionData;
+
 import java.io.Serializable;
 
 

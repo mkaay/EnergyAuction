@@ -5,13 +5,14 @@ package de.tuhh.sts.team11.client;
  */
 
 import de.tuhh.sts.team11.client.gui.UserGUI;
-import de.tuhh.sts.team11.protocol.AuctionData;
 import de.tuhh.sts.team11.protocol.CreateAccountOperation;
 import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
+import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.util.Logger;
+import de.tuhh.sts.team11.util.MessageReceiver;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -21,7 +22,6 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.states.MsgReceiver;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -104,21 +104,13 @@ public class UserAgent extends Agent {
         }
     }
 
-    class AccountHandler extends MsgReceiver {
-        Agent agent;
-
+    class AccountHandler extends MessageReceiver {
         public AccountHandler(Agent agent) {
-            super(agent, ACCOUNT_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
-            this.agent = agent;
+            super(agent, ACCOUNT_MESSAGE_TEMPLATE);
         }
 
         @Override
         protected void handleMessage(final ACLMessage msg) {
-            if (msg == null) {
-                LOG.info("got null message");
-                return;
-            }
-
             try {
                 final Object content = msg.getContentObject();
                 if (content instanceof LoginSuccessReply && msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
@@ -134,21 +126,13 @@ public class UserAgent extends Agent {
         }
     }
 
-    private class AuctionHandler extends MsgReceiver {
-        Agent agent;
-
+    private class AuctionHandler extends MessageReceiver {
         public AuctionHandler(Agent agent) {
-            super(agent, AUCTION_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
-            this.agent = agent;
+            super(agent, AUCTION_MESSAGE_TEMPLATE);
         }
 
         @Override
         protected void handleMessage(final ACLMessage msg) {
-            if (msg == null) {
-                LOG.info("got null message");
-                return;
-            }
-
             try {
                 final Object content = msg.getContentObject();
 

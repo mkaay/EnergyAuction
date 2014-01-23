@@ -1,5 +1,7 @@
 package de.tuhh.sts.team11.server.database;
 
+import de.tuhh.sts.team11.server.exceptions.UsernameAlreadyTakenException;
+import de.tuhh.sts.team11.util.Logger;
 import org.garret.perst.Database;
 import org.garret.perst.Storage;
 import org.garret.perst.StorageFactory;
@@ -10,6 +12,8 @@ import org.garret.perst.StorageFactory;
  * Templates.
  */
 public class PerstDatabase {
+    private static final Logger LOG = Logger.getLogger(PerstDatabase.class.getName());
+
     private Storage storage;
     private Database db;
     private static PerstDatabase instance;
@@ -33,11 +37,26 @@ public class PerstDatabase {
         storage.close();
     }
 
-    public UserData getUserData(String username) {
-        for (UserData userData : db.<UserData>select(UserData.class, String.format("username = '%s'", username))) {
+    public UserData getUser(String username) {
+        for (UserData userData : db.<UserData>select(UserData.class, String.format("username='%s'", username))) {
             return userData;
         }
 
         return null;
+    }
+
+    public UserData createNewUser(final String email, final String username,
+                                  final String password) throws UsernameAlreadyTakenException {
+        UserData userData = new UserData(email, username, password);
+        db.beginTransaction();
+        if (!db.addRecord(userData)) {
+            LOG.info("Duplicate UserData");
+            db.rollbackTransaction();
+
+            throw new UsernameAlreadyTakenException();
+        }
+
+        db.commitTransaction();
+        return userData;
     }
 }
