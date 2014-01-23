@@ -3,7 +3,6 @@ package de.tuhh.sts.team11.client.gui;
 import de.tuhh.sts.team11.client.UserAgent;
 import de.tuhh.sts.team11.util.Logger;
 
-import javax.swing.*;
 import java.util.Date;
 
 
@@ -17,32 +16,50 @@ public class UserGUI {
     private static final Logger LOG = Logger.getLogger(UserAgent.class.getName());
 
     private final UserAgent userAgent;
-    private JFrame searchForm;
 
     public UserGUI(final UserAgent userAgent) {
         this.userAgent = userAgent;
 
-        searchForm = SearchGUI.createForm(this);
+        showLogin();
     }
 
     // callbacks
 
     public void loginSuccess() {
         LOG.info("Login success");
+        showSearchWindow();
     }
 
     public void loginFailed(String username) {
-        new LoginForm(this, username);
+        LOG.info("Login failed");
+        showLogin(username);
     }
 
     // windows
 
     public void showLogin() {
+        LOG.info("show login");
         new LoginForm(this);
     }
 
-    public void showNewAuction() {
-        new NewAuction(this);
+    private void showLogin(final String username) {
+        LOG.info("show login");
+        new LoginForm(this, username);
+    }
+
+    public void showCreateAccount() {
+        LOG.info("show create account");
+        new CreateAccount(this);
+    }
+
+    public void showCreateAuction() {
+        LOG.info("show create auction");
+        new CreateAuction(this);
+    }
+
+    public void showSearchWindow() {
+        LOG.info("show search");
+        new SearchGUI(this);
     }
 
     // events

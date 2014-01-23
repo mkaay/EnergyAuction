@@ -13,7 +13,7 @@ import java.awt.event.WindowEvent;
  * @author mkaay
  * @since 1/22/14
  */
-public class NewAccount {
+public class CreateAccount {
     private final JFrame frame = new JFrame("New Account");
     private final UserGUI gui;
 
@@ -24,7 +24,9 @@ public class NewAccount {
     private JButton createButton;
     private JButton cancelButton;
 
-    public NewAccount(final UserGUI gui) {
+    private boolean ignoreCloseEvent = false;
+
+    public CreateAccount(final UserGUI gui) {
         this.gui = gui;
 
         cancelButton.addActionListener(new ActionListener() {
@@ -40,7 +42,9 @@ public class NewAccount {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(final WindowEvent e) {
-                cancel();
+                if (!ignoreCloseEvent) {
+                    cancel();
+                }
             }
         });
 
@@ -58,6 +62,7 @@ public class NewAccount {
     }
 
     private void closeFrame() {
+        ignoreCloseEvent = true;
         frame.setVisible(false);
         frame.dispose();
     }

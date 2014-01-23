@@ -5,9 +5,11 @@ package de.tuhh.sts.team11.server;
  */
 
 import de.tuhh.sts.team11.protocol.AuctionData;
+import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
-import de.tuhh.sts.team11.protocol.UserData;
+import de.tuhh.sts.team11.server.database.PerstDatabase;
+import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -30,10 +32,10 @@ public class MarketplaceAgent extends Agent {
     private static final MessageTemplate LOGIN_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("account");
     private static final MessageTemplate AUCTION_MESSAGE_TEMPLATE = MessageTemplate.MatchOntology("auction");
 
-    private final List<String> authorizedUsers;
+    private final List<UserData> authorizedUsers;
 
     public MarketplaceAgent() {
-        authorizedUsers = new LinkedList<String>();
+        authorizedUsers = new LinkedList<UserData>();
     }
 
     protected void setup() {
@@ -52,7 +54,7 @@ public class MarketplaceAgent extends Agent {
             fe.printStackTrace();
         }
 
-        addBehaviour(new LoginHandler(this));
+        addBehaviour(new AccountHandler(this));
         addBehaviour(new AuctionHandler(this));
     }
 
@@ -66,8 +68,8 @@ public class MarketplaceAgent extends Agent {
         LOG.info("Marketplace (" + getAID().getName() + ") terminating");
     }
 
-    class LoginHandler extends MsgReceiver {
-        public LoginHandler(MarketplaceAgent agent) {
+    class AccountHandler extends MsgReceiver {
+        public AccountHandler(MarketplaceAgent agent) {
             super(agent, LOGIN_MESSAGE_TEMPLATE, MsgReceiver.INFINITE, null, null);
         }
 
@@ -86,9 +88,17 @@ public class MarketplaceAgent extends Agent {
                     LoginOperation loginOperation = (LoginOperation) content;
                     LOG.info(String.format("Login for user %s", loginOperation.getUsername()));
                     ACLMessage reply = msg.createReply();
-                    reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                    reply.setContentObject(new LoginSuccessReply(new UserData(loginOperation.getUsername(), "",
-                            loginOperation.getPassword())));
+
+                    UserData userData = PerstDatabase.INSTANCE().getUserData(loginOperation.getUsername());
+                    if (userData != null && userData.getPassword().equals(loginOperation.getPassword())) {
+                        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                        reply.setContentObject(new LoginSuccessReply(userData.getUsername(), userData.getEmail()));
+                        authorizedUsers.add(userData);
+                    } else {
+                        reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                        reply.setContentObject(new LoginFailedReply(loginOperation.getUsername()));
+                    }
+
                     send(reply);
                 }
             } catch (UnreadableException e) {

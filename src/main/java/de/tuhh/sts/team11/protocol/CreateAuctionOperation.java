@@ -9,10 +9,10 @@ import java.io.Serializable;
  * @author mkaay
  * @since 1/23/14
  */
-public class NewAuctionOperation implements Serializable {
+public class CreateAuctionOperation implements Serializable {
     private final AuctionData auctionData;
 
-    public NewAuctionOperation(final AuctionData auctionData) {
+    public CreateAuctionOperation(final AuctionData auctionData) {
 
         this.auctionData = auctionData;
     }

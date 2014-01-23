@@ -13,7 +13,7 @@ import java.util.Vector;
 /**
  * Created by mkaay on 21.01.14.
  */
-public class NewAuction {
+public class CreateAuction {
     private final JFrame frame = new JFrame("New Auction");
     private final UserGUI gui;
 
@@ -28,7 +28,9 @@ public class NewAuction {
     private JSpinner endTimeSpinner;
     private JButton createButton;
 
-    public NewAuction(UserGUI userGUI) {
+    private boolean ignoreCloseEvent = false;
+
+    public CreateAuction(UserGUI userGUI) {
         gui = userGUI;
 
         Vector<String> typeList = new Vector<String>();
@@ -64,12 +66,15 @@ public class NewAuction {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(final WindowEvent e) {
-                cancel();
+                if (!ignoreCloseEvent) {
+                    cancel();
+                }
             }
         });
     }
 
     private void closeFrame() {
+        ignoreCloseEvent = true;
         frame.setVisible(false);
         frame.dispose();
     }
@@ -77,7 +82,7 @@ public class NewAuction {
     private void cancel() {
         closeFrame();
 
-        gui.loginClosed();
+        gui.createAuctionClosed();
     }
 
     private void submit() {

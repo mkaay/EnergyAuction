@@ -61,7 +61,7 @@ public class SearchGUI {
         newAuctionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                gui.showNewAuction();
+                gui.showCreateAuction();
             }
         });
     }

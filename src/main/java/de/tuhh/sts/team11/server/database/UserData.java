@@ -1,8 +1,6 @@
-package de.tuhh.sts.team11.protocol;
+package de.tuhh.sts.team11.server.database;
 
 import org.garret.perst.Persistent;
-
-import java.io.Serializable;
 
 
 /**
@@ -11,7 +9,7 @@ import java.io.Serializable;
  * @author mkaay
  * @since 1/23/14
  */
-public class UserData extends Persistent implements Serializable {
+public class UserData extends Persistent {
     String username;
     String email;
     String passwort;
@@ -34,7 +32,7 @@ public class UserData extends Persistent implements Serializable {
         this.email = email;
     }
 
-    public String getPasswort() {
+    public String getPassword() {
         return passwort;
     }
 

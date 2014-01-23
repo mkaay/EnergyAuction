@@ -25,6 +25,8 @@ public class LoginForm {
     private JButton loginButton;
     private JButton createNewAccountButton;
 
+    private boolean ignoreCloseEvent = false;
+
     abstract class TextChangedListener implements DocumentListener {
         @Override
         public void insertUpdate(final DocumentEvent e) {
@@ -57,10 +59,17 @@ public class LoginForm {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 if (loginButton.isEnabled()) {
-                    handleLogin();
+                    login();
                 }
             }
         };
+
+        createNewAccountButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                createAccount();
+            }
+        });
 
         usernameField.addActionListener(actionListener);
         passwordField.addActionListener(actionListener);
@@ -84,12 +93,11 @@ public class LoginForm {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(final WindowEvent e) {
-                cancel();
+                if (!ignoreCloseEvent) {
+                    cancel();
+                }
             }
         });
-    }
-
-    private void handleLogin() {
     }
 
     private void enableForm(final boolean enable) {
@@ -98,6 +106,7 @@ public class LoginForm {
     }
 
     private void closeFrame() {
+        ignoreCloseEvent = true;
         frame.setVisible(false);
         frame.dispose();
     }
@@ -108,9 +117,15 @@ public class LoginForm {
         gui.loginClosed();
     }
 
-    private void submit() {
+    private void login() {
         closeFrame();
 
         gui.login(usernameField.getText(), passwordField.getText());
+    }
+
+    private void createAccount() {
+        closeFrame();
+
+        gui.showCreateAccount();
     }
 }

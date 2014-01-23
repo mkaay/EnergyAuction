@@ -9,12 +9,12 @@ import java.io.Serializable;
  * @author mkaay
  * @since 1/23/14
  */
-public class NewAccountOperation implements Serializable {
+public class CreateAccountOperation implements Serializable {
     private final String email;
     private final String username;
     private final String password;
 
-    public NewAccountOperation(final String email, final String username, final String password) {
+    public CreateAccountOperation(final String email, final String username, final String password) {
         this.email = email;
         this.username = username;
         this.password = password;

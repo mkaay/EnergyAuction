@@ -6,11 +6,11 @@ package de.tuhh.sts.team11.client;
 
 import de.tuhh.sts.team11.client.gui.UserGUI;
 import de.tuhh.sts.team11.protocol.AuctionData;
+import de.tuhh.sts.team11.protocol.CreateAccountOperation;
+import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
-import de.tuhh.sts.team11.protocol.NewAccountOperation;
-import de.tuhh.sts.team11.protocol.NewAuctionOperation;
 import de.tuhh.sts.team11.util.Logger;
 import jade.core.AID;
 import jade.core.Agent;
@@ -75,7 +75,7 @@ public class UserAgent extends Agent {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
             msg.setOntology("account");
-            msg.setContentObject(new NewAccountOperation(email, username, password));
+            msg.setContentObject(new CreateAccountOperation(email, username, password));
             msg.addReceiver(marketplace);
             send(msg);
         } catch (Exception ex) {
@@ -96,7 +96,7 @@ public class UserAgent extends Agent {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
             msg.setOntology("auction");
-            msg.setContentObject(new NewAuctionOperation(auctionData));
+            msg.setContentObject(new CreateAuctionOperation(auctionData));
             msg.addReceiver(marketplace);
             send(msg);
         } catch (Exception ex) {
@@ -122,7 +122,7 @@ public class UserAgent extends Agent {
             try {
                 final Object content = msg.getContentObject();
                 if (content instanceof LoginSuccessReply && msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-                    //TODO
+                    userGUI.loginSuccess();
                 } else if (content instanceof LoginFailedReply && msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                     final LoginFailedReply loginFailedReply = (LoginFailedReply) content;
 

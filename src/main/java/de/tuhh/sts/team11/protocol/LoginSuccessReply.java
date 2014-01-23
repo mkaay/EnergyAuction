@@ -10,13 +10,20 @@ import java.io.Serializable;
  * @since 1/23/14
  */
 public class LoginSuccessReply implements Serializable {
-    private final UserData userData;
+    private final String username;
+    private final String email;
 
-    public LoginSuccessReply(final UserData userData) {
-        this.userData = userData;
+    public LoginSuccessReply(final String username, final String email) {
+
+        this.username = username;
+        this.email = email;
     }
 
-    public UserData getUserData() {
-        return userData;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
