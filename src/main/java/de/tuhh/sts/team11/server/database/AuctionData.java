@@ -1,37 +1,38 @@
 package de.tuhh.sts.team11.server.database;
 
 import de.tuhh.sts.team11.util.Types;
+import org.garret.perst.Link;
 import org.garret.perst.Persistent;
 
 import java.util.Date;
 
+
 /**
-* Created by mkaay on 21.01.14.
-*/
+ * Created by mkaay on 21.01.14.
+ */
 public class AuctionData extends Persistent {
     private String name;
     private int amount;
-    private Types.AuctionType auctionType;
+    private Types.AuctionType type;
     private Date startTime;
     private Date endTime;
     private int price;
     private int priceDelta;
     private int timeDelta;
-    private Types.AuctionDirection auctionDirection;
+    private Link<BidData> bids;
+    private BidData winner;
 
-    public AuctionData(final String name, final Integer amount, final Integer price, final Types.AuctionType
-            auctionType, final Types.AuctionDirection auctionDirection, final Date startTime, final Date endTime,
-                       final Integer priceDelta,
-                       final Integer timeDelta) {
+    protected AuctionData(final String name, final Integer amount, final Integer price, final Types.AuctionType
+            type, final Date startTime, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
         this.name = name;
         this.amount = amount;
         this.price = price;
-        this.auctionType = auctionType;
-        this.auctionDirection = auctionDirection;
+        this.type = type;
         this.startTime = startTime;
         this.endTime = endTime;
         this.priceDelta = priceDelta;
         this.timeDelta = timeDelta;
+        bids = PerstDatabase.INSTANCE().getStorage().createLink();
     }
 
     public String getName() {
@@ -50,12 +51,12 @@ public class AuctionData extends Persistent {
         this.amount = amount;
     }
 
-    public Types.AuctionType getAuctionType() {
-        return auctionType;
+    public Types.AuctionType getType() {
+        return type;
     }
 
-    public void setAuctionType(Types.AuctionType auctionType) {
-        this.auctionType = auctionType;
+    public void setType(Types.AuctionType type) {
+        this.type = type;
     }
 
     public Date getStartTime() {
@@ -98,11 +99,15 @@ public class AuctionData extends Persistent {
         this.timeDelta = timeDelta;
     }
 
-    public Types.AuctionDirection getAuctionDirection() {
-        return auctionDirection;
+    public void addWinner(final BidData winner) {
+        this.winner = winner;
     }
 
-    public void setAuctionDirection(Types.AuctionDirection auctionDirection) {
-        this.auctionDirection = auctionDirection;
+    public BidData getWinner() {
+        return winner;
+    }
+
+    protected void addBid(final BidData bidData) {
+        bids.add(bidData);
     }
 }

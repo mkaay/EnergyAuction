@@ -24,30 +24,28 @@ public class ListAuctionsReply implements Serializable {
 
     public void addAuction(final AuctionData auction) {
         auctions.add(new Auction(auction.getName(), auction.getAmount(), auction.getPrice(),
-                auction.getAuctionType(), auction.getAuctionDirection(), auction.getStartTime(),
+                auction.getType(), auction.getStartTime(),
                 auction.getEndTime(), auction.getPriceDelta(), auction.getTimeDelta()));
     }
 
     public class Auction implements Serializable {
         private String name;
         private int amount;
-        private Types.AuctionType auctionType;
+        private Types.AuctionType type;
         private Date startTime;
         private Date endTime;
         private int price;
         private int priceDelta;
         private int timeDelta;
-        private Types.AuctionDirection auctionDirection;
 
         public Auction(final String name, final Integer amount, final Integer price, final Types.AuctionType
-                auctionType, final Types.AuctionDirection auctionDirection, final Date startTime, final Date endTime,
+                type, final Date startTime, final Date endTime,
                        final Integer priceDelta,
                        final Integer timeDelta) {
             this.name = name;
             this.amount = amount;
             this.price = price;
-            this.auctionType = auctionType;
-            this.auctionDirection = auctionDirection;
+            this.type = type;
             this.startTime = startTime;
             this.endTime = endTime;
             this.priceDelta = priceDelta;
@@ -62,8 +60,8 @@ public class ListAuctionsReply implements Serializable {
             return amount;
         }
 
-        public Types.AuctionType getAuctionType() {
-            return auctionType;
+        public Types.AuctionType getType() {
+            return type;
         }
 
         public Date getStartTime() {
@@ -84,10 +82,6 @@ public class ListAuctionsReply implements Serializable {
 
         public int getTimeDelta() {
             return timeDelta;
-        }
-
-        public Types.AuctionDirection getAuctionDirection() {
-            return auctionDirection;
         }
     }
 }

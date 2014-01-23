@@ -2,6 +2,8 @@ package de.tuhh.sts.team11.server.database;
 
 import org.garret.perst.Persistent;
 
+import java.util.Date;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,27 +12,37 @@ import org.garret.perst.Persistent;
  * @since 1/23/14
  */
 public class BidData extends Persistent {
-    int preis;
-    long zeit;
+    private final int price;
+    private final int amount;
+    private final AuctionData auction;
+    private final Date time;
+    private final UserData user;
 
-    public BidData(int preis, long zeit) {
-        this.preis = preis;
-        this.zeit = zeit;
+    protected BidData(int price, int amount, AuctionData auction, Date time, UserData user) {
+        this.price = price;
+        this.amount = amount;
+        this.auction = auction;
+        this.time = time;
+        this.user = user;
     }
 
-    int getPreis() {
-        return preis;
+    public int getPrice() {
+        return price;
     }
 
-    void setPreis(int preis) {
-        this.preis = preis;
+    public Date getTime() {
+        return time;
     }
 
-    long getZeit() {
-        return zeit;
+    public AuctionData getAuction() {
+        return auction;
     }
 
-    void setZeit(long zeit) {
-        this.zeit = zeit;
+    public UserData getUser() {
+        return user;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 }

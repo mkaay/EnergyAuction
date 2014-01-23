@@ -16,7 +16,7 @@ import java.util.List;
  */
 class AuctionTableModel extends AbstractTableModel {
     private List<ListAuctionsReply.Auction> auctions = new ArrayList<ListAuctionsReply.Auction>();
-    private String[] columnNames = {"Name", "Amount", "Price", "Type", "End", "Buy/Sell"};
+    private String[] columnNames = {"Name", "Amount", "Price", "Type", "End"};
 
     public void setAuctions(final List<ListAuctionsReply.Auction> auctions) {
         this.auctions = auctions;
@@ -53,11 +53,9 @@ class AuctionTableModel extends AbstractTableModel {
             case 2:
                 return auction.getPrice();
             case 3:
-                return auction.getAuctionType().equals(Types.AuctionType.DUTCH) ? "Dutch" : "Reverse Dutch";
+                return auction.getType().equals(Types.AuctionType.DUTCH) ? "Dutch" : "Reverse Dutch";
             case 4:
                 return auction.getEndTime();
-            case 5:
-                return auction.getAuctionDirection().equals(Types.AuctionDirection.BUY) ? "Buy" : "Sell";
             default:
                 return "";
         }

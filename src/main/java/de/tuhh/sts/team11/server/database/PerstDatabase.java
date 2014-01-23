@@ -68,11 +68,11 @@ public class PerstDatabase {
 
     public AuctionData createAuction(final String name, final Integer amount, final Integer price,
                                      final Types.AuctionType
-                                             auctionType, final Types.AuctionDirection auctionDirection,
+                                             auctionType,
                                      final Date endTime, final Integer priceDelta,
                                      final Integer timeDelta) {
         Date startTime = GregorianCalendar.getInstance().getTime();
-        AuctionData auctionData = new AuctionData(name, amount, price, auctionType, auctionDirection, startTime,
+        AuctionData auctionData = new AuctionData(name, amount, price, auctionType, startTime,
                 endTime, priceDelta, timeDelta);
         db.beginTransaction();
         db.addRecord(auctionData);
@@ -83,5 +83,20 @@ public class PerstDatabase {
 
     public IterableIterator<AuctionData> getAuctions() {
         return db.getRecords(AuctionData.class);
+    }
+
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public BidData createBid(int amount, final AuctionData auctionData, final UserData userData) {
+        BidData bidData = new BidData(auctionData.getPrice(), amount, auctionData,
+                GregorianCalendar.getInstance().getTime(), userData);
+        auctionData.addBid(bidData);
+        db.beginTransaction();
+        db.addRecord(bidData);
+        auctionData.store();
+        db.commitTransaction();
+        return bidData;
     }
 }

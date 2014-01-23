@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+
 /**
  * Created by mkaay on 21.01.14.
  */
@@ -23,7 +24,6 @@ public class CreateAuction {
     private JTextField nameField;
     private JSpinner amountSpinner;
     private JComboBox typeSelect;
-    private JComboBox directionSelect;
     private JSpinner priceSpinner;
     private JSpinner priceDeltaSpinner;
     private JSpinner timeDeltaSpinner;
@@ -39,12 +39,7 @@ public class CreateAuction {
         typeList.add("Dutch");
         typeList.add("Reverse Dutch");
 
-        Vector<String> directionList = new Vector<String>();
-        directionList.add("Buy");
-        directionList.add("Sell");
-
         typeSelect.setModel(new DefaultComboBoxModel(typeList));
-        directionSelect.setModel(new DefaultComboBoxModel(directionList));
 
         Calendar calendar = new GregorianCalendar();
         calendar.add(Calendar.HOUR, 1);
@@ -93,7 +88,7 @@ public class CreateAuction {
     private void submit() {
         closeFrame();
 
-        gui.createAuction(getName(), getAmount(), getPrice(), getType(), getDirection(), getEndTime(),
+        gui.createAuction(getName(), getAmount(), getPrice(), getType(), getEndTime(),
                 getPriceDelta(), getTimeDelta());
     }
 
@@ -111,10 +106,6 @@ public class CreateAuction {
 
     private Date getEndTime() {
         return (Date) endTimeSpinner.getModel().getValue();
-    }
-
-    private Types.AuctionDirection getDirection() {
-        return directionSelect.getSelectedIndex() == 0 ? Types.AuctionDirection.BUY : Types.AuctionDirection.SELL;
     }
 
     private Types.AuctionType getType() {

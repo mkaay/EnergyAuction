@@ -20,6 +20,8 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,8 +59,16 @@ public class MarketplaceAgent extends Agent {
             fe.printStackTrace();
         }
 
+        restore();
+
         addBehaviour(new AccountHandler(this));
         addBehaviour(new AuctionHandler(this));
+    }
+
+    private void restore() {
+        for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
+            createAuctionAgent(auctionData);
+        }
     }
 
     protected void takeDown() {
@@ -152,7 +162,7 @@ public class MarketplaceAgent extends Agent {
 
                         CreateAuctionOperation o = (CreateAuctionOperation) content;
                         PerstDatabase.INSTANCE().createAuction(o.getName(), o.getAmount(), o.getPrice(),
-                                o.getAuctionType(), o.getAuctionDirection(), o.getEndTime(), o.getPriceDelta(),
+                                o.getAuctionType(), o.getEndTime(), o.getPriceDelta(),
                                 o.getTimeDelta());
 
                         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
@@ -197,4 +207,18 @@ public class MarketplaceAgent extends Agent {
 
         return message;
     }
+
+    private void createAuctionAgent(AuctionData auctionData) {
+        Object[] args = {auctionData};
+
+        AgentContainer agentContainer = getContainerController();
+        try {
+            AgentController controller = agentContainer.createNewAgent(String.format("auction_id%d",
+                    auctionData.getOid()), "de.tuhh.sts.team11.server.AuctionAgent", args);
+            controller.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

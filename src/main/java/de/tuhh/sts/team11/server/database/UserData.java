@@ -18,7 +18,7 @@ public class UserData extends Persistent {
     String username;
     String password;
 
-    public UserData(String email, String username, String password) {
+    protected UserData(String email, String username, String password) {
         this.email = email;
         this.username = username;
         this.password = password;

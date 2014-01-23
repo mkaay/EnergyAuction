@@ -43,6 +43,14 @@ public class UserGUI {
         searchGUI.setAuctionList(auctions);
     }
 
+    public void createAuctionFailed() {
+        // should only happen if not logged in
+    }
+
+    public void createAuctionSuccess() {
+
+    }
+
     // windows
 
     public void showLogin() {
@@ -94,9 +102,9 @@ public class UserGUI {
     }
 
     public void createAuction(final String name, final Integer amount, final Integer price,
-                              final Types.AuctionType type, final
-    Types.AuctionDirection direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
-        userAgent.createAuction(name, amount, price, type, direction, endTime, priceDelta, timeDelta);
+                              final Types.AuctionType type, final Date endTime, final Integer priceDelta,
+                              final Integer timeDelta) {
+        userAgent.createAuction(name, amount, price, type, endTime, priceDelta, timeDelta);
     }
 
     public void searchClosed() {

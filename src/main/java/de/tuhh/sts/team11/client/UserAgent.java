@@ -87,13 +87,12 @@ public class UserAgent extends Agent {
     }
 
     public void createAuction(final String name, final Integer amount, final Integer price,
-                              final Types.AuctionType type, final
-
-    Types.AuctionDirection direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
+                              final Types.AuctionType type, final Date endTime, final Integer priceDelta,
+                              final Integer timeDelta) {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
             msg.setOntology("auction");
-            msg.setContentObject(new CreateAuctionOperation(name, amount, price, type, direction, endTime, priceDelta, timeDelta));
+            msg.setContentObject(new CreateAuctionOperation(name, amount, price, type, endTime, priceDelta, timeDelta));
             msg.addReceiver(marketplace);
             send(msg);
         } catch (Exception ex) {
@@ -152,9 +151,10 @@ public class UserAgent extends Agent {
                     userGUI.setAuctionList(reply.getAuctions());
                 } else if (content instanceof CreateAuctionSuccessReply && msg.getPerformative() == ACLMessage
                         .ACCEPT_PROPOSAL) {
-                    //TODO
-                } else if (content instanceof CreateAuctionFailedReply && msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
-                    //TODO
+                    userGUI.createAuctionSuccess();
+                } else if (content instanceof CreateAuctionFailedReply && msg.getPerformative() == ACLMessage
+                        .REJECT_PROPOSAL) {
+                    userGUI.createAuctionFailed();
                 }
             } catch (UnreadableException e) {
                 LOG.severe("message corrupted", e);
