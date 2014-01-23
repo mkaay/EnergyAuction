@@ -1,5 +1,6 @@
 package de.tuhh.sts.team11.server.database;
 
+import de.tuhh.sts.team11.util.Types;
 import org.garret.perst.Persistent;
 
 import java.io.Serializable;
@@ -9,31 +10,29 @@ import java.util.Date;
 * Created by mkaay on 21.01.14.
 */
 public class AuctionData extends Persistent implements Serializable {
-    public enum Type {DUTCH, REVERSE_DUTCH}
-
-    public enum Direction {BUY, SELL}
 
     private String name;
     private int amount;
-    private Type type;
+    private Types.AuctionType auctionType;
     private Date startTime;
     private Date endTime;
     private int price;
     private int priceDelta;
     private int timeDelta;
-    private Direction direction;
+    private Types.AuctionDirection auctionDirection;
 
-    public AuctionData(String name, int amount, Type type, Date start, Date end, int price, int priceDelta,
-                       int timeDelta, Direction direction) {
+    public AuctionData(String name, int amount, Types.AuctionType auctionType, Date start, Date end, int price,
+                       int priceDelta,
+                       int timeDelta, Types.AuctionDirection auctionDirection) {
         this.name = name;
         this.amount = amount;
-        this.type = type;
+        this.auctionType = auctionType;
         this.startTime = start;
         this.endTime = end;
         this.price = price;
         this.priceDelta = priceDelta;
         this.timeDelta = timeDelta;
-        this.direction = direction;
+        this.auctionDirection = auctionDirection;
     }
 
     public String getName() {
@@ -52,12 +51,12 @@ public class AuctionData extends Persistent implements Serializable {
         this.amount = amount;
     }
 
-    Type getType() {
-        return type;
+    Types.AuctionType getAuctionType() {
+        return auctionType;
     }
 
-    void setType(Type type) {
-        this.type = type;
+    void setAuctionType(Types.AuctionType auctionType) {
+        this.auctionType = auctionType;
     }
 
     Date getStartTime() {
@@ -100,11 +99,11 @@ public class AuctionData extends Persistent implements Serializable {
         this.timeDelta = timeDelta;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public Types.AuctionDirection getAuctionDirection() {
+        return auctionDirection;
     }
 
-    void setDirection(Direction direction) {
-        this.direction = direction;
+    void setAuctionDirection(Types.AuctionDirection auctionDirection) {
+        this.auctionDirection = auctionDirection;
     }
 }

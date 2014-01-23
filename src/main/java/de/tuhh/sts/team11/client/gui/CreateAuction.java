@@ -1,5 +1,7 @@
 package de.tuhh.sts.team11.client.gui;
 
+import de.tuhh.sts.team11.util.Types;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,9 +47,12 @@ public class CreateAuction {
         directionSelect.setModel(new DefaultComboBoxModel(directionList));
 
         Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.HOUR, 1);
         Date initDate = calendar.getTime();
+
         calendar.add(Calendar.YEAR, -100);
         Date earliestDate = calendar.getTime();
+
         calendar.add(Calendar.YEAR, 200);
         Date latestDate = calendar.getTime();
 
@@ -108,12 +113,12 @@ public class CreateAuction {
         return (Date) endTimeSpinner.getModel().getValue();
     }
 
-    private String getDirection() {
-        return directionSelect.getSelectedIndex() == 0 ? "buy" : "sell";
+    private Types.AuctionDirection getDirection() {
+        return directionSelect.getSelectedIndex() == 0 ? Types.AuctionDirection.BUY : Types.AuctionDirection.SELL;
     }
 
-    private String getType() {
-        return typeSelect.getSelectedIndex() == 0 ? "dutch" : "reversedutch";
+    private Types.AuctionType getType() {
+        return typeSelect.getSelectedIndex() == 0 ? Types.AuctionType.DUTCH : Types.AuctionType.REVERSE_DUTCH;
     }
 
     private Integer getAmount() {

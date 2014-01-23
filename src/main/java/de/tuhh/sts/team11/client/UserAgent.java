@@ -10,9 +10,9 @@ import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
-import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.MessageReceiver;
+import de.tuhh.sts.team11.util.Types;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -24,7 +24,6 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 
 public class UserAgent extends Agent {
@@ -83,20 +82,14 @@ public class UserAgent extends Agent {
         }
     }
 
-    public void createAuction(final String name, final Integer amount, final Integer price, final String type, final
-    String direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
-        final AuctionData.Type auctionType = type == "dutch" ? AuctionData.Type.DUTCH : AuctionData.Type.REVERSE_DUTCH;
-        final Date startTime = GregorianCalendar.getInstance().getTime();
-        final AuctionData.Direction auctionDirection =
-                direction == "buy" ? AuctionData.Direction.BUY : AuctionData.Direction.SELL;
+    public void createAuction(final String name, final Integer amount, final Integer price,
+                              final Types.AuctionType type, final
 
-        AuctionData auctionData = new AuctionData(name, amount, auctionType, startTime, endTime, price, priceDelta,
-                timeDelta, auctionDirection);
-
+    Types.AuctionDirection direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
         ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
         try {
             msg.setOntology("auction");
-            msg.setContentObject(new CreateAuctionOperation(auctionData));
+            msg.setContentObject(new CreateAuctionOperation(name, amount, price, type, direction, endTime, priceDelta, timeDelta));
             msg.addReceiver(marketplace);
             send(msg);
         } catch (Exception ex) {

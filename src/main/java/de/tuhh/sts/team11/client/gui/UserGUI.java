@@ -2,6 +2,7 @@ package de.tuhh.sts.team11.client.gui;
 
 import de.tuhh.sts.team11.client.UserAgent;
 import de.tuhh.sts.team11.util.Logger;
+import de.tuhh.sts.team11.util.Types;
 
 import java.util.Date;
 
@@ -84,8 +85,13 @@ public class UserGUI {
 
     }
 
-    public void createAuction(final String name, final Integer amount, final Integer price, final String type, final
-    String direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
+    public void createAuction(final String name, final Integer amount, final Integer price,
+                              final Types.AuctionType type, final
+    Types.AuctionDirection direction, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
         userAgent.createAuction(name, amount, price, type, direction, endTime, priceDelta, timeDelta);
+    }
+
+    public void searchClosed() {
+
     }
 }

@@ -36,18 +36,6 @@ public class CreateAccount {
             }
         });
 
-        frame.setContentPane(contentPane);
-        frame.pack();
-        frame.setVisible(true);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(final WindowEvent e) {
-                if (!ignoreCloseEvent) {
-                    cancel();
-                }
-            }
-        });
-
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -59,6 +47,18 @@ public class CreateAccount {
         emailField.addActionListener(actionListener);
         usernameField.addActionListener(actionListener);
         passwordField.addActionListener(actionListener);
+
+        frame.setContentPane(contentPane);
+        frame.pack();
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                if (!ignoreCloseEvent) {
+                    cancel();
+                }
+            }
+        });
     }
 
     private void closeFrame() {

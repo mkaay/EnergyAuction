@@ -14,6 +14,7 @@ public class UserData extends Persistent {
     String email;
 
     @Indexable(unique = true, caseInsensitive = true)
+    final
     String username;
     String password;
 

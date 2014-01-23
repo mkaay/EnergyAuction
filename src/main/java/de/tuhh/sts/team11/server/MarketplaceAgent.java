@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("UnusedDeclaration")
 public class MarketplaceAgent extends Agent {
     private static final Logger LOG = Logger.getLogger(MarketplaceAgent.class.getName());
 

@@ -14,10 +14,10 @@ import org.garret.perst.StorageFactory;
 public class PerstDatabase {
     private static final Logger LOG = Logger.getLogger(PerstDatabase.class.getName());
 
-    private Storage storage;
-    private Database db;
+    private final Storage storage;
+    private final Database db;
     private static PerstDatabase instance;
-    private static String defaultDatabase = "res/data.dbs";
+    private static final String defaultDatabase = "res/data.dbs";
 
     public static PerstDatabase INSTANCE() {
         if (instance == null) {
@@ -37,6 +37,7 @@ public class PerstDatabase {
         storage.close();
     }
 
+    @SuppressWarnings("LoopStatementThatDoesntLoop")
     public UserData getUser(String username) {
         for (UserData userData : db.<UserData>select(UserData.class, String.format("username='%s'", username))) {
             return userData;

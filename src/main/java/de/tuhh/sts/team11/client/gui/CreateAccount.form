@@ -15,7 +15,7 @@
       <xy x="20" y="20" width="326" height="119"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border auctionType="none"/>
     <children>
       <component id="45549" class="javax.swing.JTextField" binding="emailField">
         <constraints>
@@ -51,7 +51,7 @@
         </constraints>
         <properties>
           <labelFor value="45549"/>
-          <text value="Email:"/>
+          <text value="&amp;Email:"/>
         </properties>
       </component>
       <component id="29921" class="javax.swing.JLabel">
@@ -61,7 +61,7 @@
         </constraints>
         <properties>
           <labelFor value="91a34"/>
-          <text value="Username:"/>
+          <text value="&amp;Username:"/>
         </properties>
       </component>
       <component id="a43f7" class="javax.swing.JLabel">
@@ -71,7 +71,7 @@
         </constraints>
         <properties>
           <labelFor value="71442"/>
-          <text value="Password:"/>
+          <text value="&amp;Password:"/>
         </properties>
       </component>
       <component id="8d618" class="javax.swing.JButton" binding="createButton" default-binding="true">
@@ -80,7 +80,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Create"/>
+          <text value="&amp;Create"/>
         </properties>
       </component>
       <component id="18b38" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
@@ -89,7 +89,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Cancel"/>
+          <text value="C&amp;ancel"/>
         </properties>
       </component>
     </children>

@@ -27,7 +27,7 @@
       <xy x="20" y="20" width="486" height="278"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border auctionType="none"/>
     <children>
       <component id="6de8b" class="javax.swing.JLabel">
         <constraints>
@@ -35,7 +35,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Name:"/>
+          <labelFor value="1ae9"/>
+          <text value="&amp;Name:"/>
         </properties>
       </component>
       <component id="1ae9" class="javax.swing.JTextField" binding="nameField">
@@ -53,7 +54,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Menge:"/>
+          <labelFor value="f845f"/>
+          <text value="&amp;Amount:"/>
         </properties>
       </component>
       <component id="f845f" class="javax.swing.JSpinner" binding="amountSpinner">
@@ -69,7 +71,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Typ:"/>
+          <labelFor value="a80f0"/>
+          <text value="&amp;Type:"/>
         </properties>
       </component>
       <component id="a80f0" class="javax.swing.JComboBox" binding="typeSelect">
@@ -85,7 +88,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="An-/Verkauf:"/>
+          <labelFor value="60ed2"/>
+          <text value="&amp;Buy/Sell:"/>
         </properties>
       </component>
       <component id="60ed2" class="javax.swing.JComboBox" binding="directionSelect">
@@ -101,7 +105,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Preis:"/>
+          <labelFor value="84ea"/>
+          <text value="&amp;Price:"/>
         </properties>
       </component>
       <component id="84ea" class="javax.swing.JSpinner" binding="priceSpinner">
@@ -117,7 +122,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Ende:"/>
+          <labelFor value="55793"/>
+          <text value="&amp;End:"/>
         </properties>
       </component>
       <component id="583cc" class="javax.swing.JLabel">
@@ -126,7 +132,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Preisänderung:"/>
+          <labelFor value="7cb35"/>
+          <text value="P&amp;ricechange:"/>
         </properties>
       </component>
       <component id="7cb35" class="javax.swing.JSpinner" binding="priceDeltaSpinner">
@@ -142,7 +149,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Änderungsintervall:"/>
+          <labelFor value="65d64"/>
+          <text value="Change &amp;interval:"/>
         </properties>
       </component>
       <component id="65d64" class="javax.swing.JSpinner" binding="timeDeltaSpinner">
@@ -165,7 +173,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Create"/>
+          <text value="&amp;Create"/>
         </properties>
       </component>
     </children>
