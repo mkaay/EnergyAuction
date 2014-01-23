@@ -3,14 +3,12 @@ package de.tuhh.sts.team11.server.database;
 import de.tuhh.sts.team11.util.Types;
 import org.garret.perst.Persistent;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
 * Created by mkaay on 21.01.14.
 */
-public class AuctionData extends Persistent implements Serializable {
-
+public class AuctionData extends Persistent {
     private String name;
     private int amount;
     private Types.AuctionType auctionType;
@@ -27,17 +25,13 @@ public class AuctionData extends Persistent implements Serializable {
                        final Integer timeDelta) {
         this.name = name;
         this.amount = amount;
+        this.price = price;
         this.auctionType = auctionType;
+        this.auctionDirection = auctionDirection;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.price = price;
         this.priceDelta = priceDelta;
         this.timeDelta = timeDelta;
-        this.auctionDirection = auctionDirection;
-    }
-
-    public AuctionData() {
-
     }
 
     public String getName() {

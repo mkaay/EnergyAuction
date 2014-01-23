@@ -22,7 +22,6 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -189,12 +188,12 @@ public class MarketplaceAgent extends Agent {
         ACLMessage message = new ACLMessage(ACLMessage.INFORM);
         message.setOntology("auction");
 
-        List<AuctionData> auctions = new ArrayList<AuctionData>();
+        final ListAuctionsReply listAuctionsReply = new ListAuctionsReply();
         for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
-            auctions.add(auctionData);
+            listAuctionsReply.addAuction(auctionData);
         }
 
-        message.setContentObject(new ListAuctionsReply(auctions));
+        message.setContentObject(listAuctionsReply);
 
         return message;
     }

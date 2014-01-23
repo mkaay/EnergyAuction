@@ -148,6 +148,7 @@ public class UserAgent extends Agent {
                 if (content instanceof ListAuctionsReply) {
                     LOG.info("Got auctions");
                     ListAuctionsReply reply = (ListAuctionsReply) content;
+                    LOG.info(reply.getAuctions().get(0).getName());
                     userGUI.setAuctionList(reply.getAuctions());
                 } else if (content instanceof CreateAuctionSuccessReply && msg.getPerformative() == ACLMessage
                         .ACCEPT_PROPOSAL) {

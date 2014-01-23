@@ -1,7 +1,7 @@
 package de.tuhh.sts.team11.client.gui;
 
 import de.tuhh.sts.team11.client.UserAgent;
-import de.tuhh.sts.team11.server.database.AuctionData;
+import de.tuhh.sts.team11.protocol.ListAuctionsReply;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.Types;
 
@@ -39,7 +39,7 @@ public class UserGUI {
         showLogin(username);
     }
 
-    public void setAuctionList(final List<AuctionData> auctions) {
+    public void setAuctionList(final List<ListAuctionsReply.Auction> auctions) {
         searchGUI.setAuctionList(auctions);
     }
 

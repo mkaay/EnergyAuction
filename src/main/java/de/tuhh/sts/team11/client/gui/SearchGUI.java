@@ -1,14 +1,12 @@
 package de.tuhh.sts.team11.client.gui;
 
-import de.tuhh.sts.team11.server.database.AuctionData;
+import de.tuhh.sts.team11.protocol.ListAuctionsReply;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,12 +25,12 @@ public class SearchGUI {
     private JPanel contentPane;
 
     private boolean ignoreCloseEvent = false;
-    private final AuctionModel dataModel;
+    private final AuctionTableModel dataModel;
 
     public SearchGUI(UserGUI userGUI) {
         gui = userGUI;
 
-        dataModel = new AuctionModel();
+        dataModel = new AuctionTableModel();
 
         auctionList.setModel(dataModel);
 
@@ -68,54 +66,8 @@ public class SearchGUI {
         frame.dispose();
     }
 
-    public void setAuctionList(final List<AuctionData> auctions) {
+    public void setAuctionList(final List<ListAuctionsReply.Auction> auctions) {
         dataModel.setAuctions(auctions);
     }
 
-    private class AuctionModel extends AbstractTableModel {
-        private List<AuctionData> auctions = new ArrayList<AuctionData>();
-        private String[] columnNames = {"Name", "Amount", "Price", "Type", "End", "Buy/Sell"};
-
-        public void setAuctions(final List<AuctionData> auctions) {
-            this.auctions = auctions;
-            fireTableDataChanged();
-        }
-
-        @Override
-        public String getColumnName(int i) {
-            return columnNames[i];
-        }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return auctions.size();
-        }
-
-        public Object getValueAt(int row, int col) {
-            AuctionData auction = auctions.get(row);
-            if (auction == null) {
-                return "";
-            }
-
-            switch (col) {
-                case 0:
-                    return auction.getName();
-                case 1:
-                    return auction.getAmount();
-                case 2:
-                    return auction.getPrice();
-                case 3:
-                    return "";//auction.getAuctionType().equals(Types.AuctionType.DUTCH) ? "Dutch" : "Reverse Dutch";
-                case 4:
-                    return auction.getEndTime();
-                case 5:
-                    return "";//auction.getAuctionDirection().equals(Types.AuctionDirection.BUY) ? "Buy" : "Sell";
-                default:
-                    return "";
-            }
-        }
-    }
 }
