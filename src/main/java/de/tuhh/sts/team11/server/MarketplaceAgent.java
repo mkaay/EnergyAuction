@@ -7,11 +7,11 @@ package de.tuhh.sts.team11.server;
 import de.tuhh.sts.team11.protocol.CreateAccountFailedReply;
 import de.tuhh.sts.team11.protocol.CreateAccountOperation;
 import de.tuhh.sts.team11.protocol.CreateAuctionFailedReply;
+import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
 import de.tuhh.sts.team11.protocol.CreateAuctionSuccessReply;
 import de.tuhh.sts.team11.protocol.LoginFailedReply;
 import de.tuhh.sts.team11.protocol.LoginOperation;
 import de.tuhh.sts.team11.protocol.LoginSuccessReply;
-import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.server.database.PerstDatabase;
 import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.server.exceptions.UsernameAlreadyTakenException;
@@ -148,21 +148,25 @@ public class MarketplaceAgent extends Agent {
         @Override
         protected void handleMessage(final ACLMessage msg) {
             try {
-                AuctionData auctionData = (AuctionData) msg.getContentObject();
-                LOG.info(String.format("New Auction %s", auctionData.getName()));
+                Object content = msg.getContentObject();
+
                 ACLMessage reply = msg.createReply();
 
-                if (aidToUser.containsKey(msg.getSender())) {
-                    reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                    reply.setContentObject(new CreateAuctionSuccessReply());
-                } else {
-                    reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-                    reply.setContentObject(new CreateAuctionFailedReply("not logged in"));
+                if (content instanceof CreateAuctionOperation) {
+                    if (aidToUser.containsKey(msg.getSender())) {
+                        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                        reply.setContentObject(new CreateAuctionSuccessReply());
+                        LOG.info("Creating new auction");
+                    } else {
+                        reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                        reply.setContentObject(new CreateAuctionFailedReply("not logged in"));
+                        LOG.info("User not logged in");
+                    }
                 }
 
                 send(reply);
             } catch (UnreadableException e) {
-                LOG.warning("corrupt AuctionData", e);
+                LOG.warning("corrupt message", e);
             } catch (IOException e) {
                 e.printStackTrace();
             }
