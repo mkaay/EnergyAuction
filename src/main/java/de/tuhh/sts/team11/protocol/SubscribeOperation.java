@@ -10,13 +10,14 @@ import java.io.Serializable;
  * @since 1/23/14
  */
 public class SubscribeOperation implements Serializable {
-    private final String username;
+    private final int oid;
 
-    public SubscribeOperation(String username) {
-        this.username = username;
+    public SubscribeOperation(int oid) {
+
+        this.oid = oid;
     }
 
-    public String getUsername() {
-        return username;
+    public int getOid() {
+        return oid;
     }
 }

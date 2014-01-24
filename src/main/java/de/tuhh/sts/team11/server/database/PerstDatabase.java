@@ -85,12 +85,17 @@ public class PerstDatabase {
         return db.<AuctionData>select(AuctionData.class, "");
     }
 
+    public IterableIterator<AuctionData> getActiveAuctions() {
+        return db.<AuctionData>select(AuctionData.class, "amount > 0");
+    }
+
     public Storage getStorage() {
         return storage;
     }
 
-    public BidData createBid(int amount, final AuctionData auctionData, final UserData userData) {
-        BidData bidData = new BidData(auctionData.getPrice(), amount, auctionData,
+    public BidData createBid(final int price, final int amount, final AuctionData auctionData,
+                             final UserData userData) {
+        BidData bidData = new BidData(price, amount, auctionData,
                 GregorianCalendar.getInstance().getTime(), userData);
         auctionData.addBid(bidData);
         db.beginTransaction();
@@ -106,5 +111,21 @@ public class PerstDatabase {
         }
 
         return null;
+    }
+
+    public BidData getBid(final int oid) {
+        for (BidData bidData : db.<BidData>select(BidData.class, String.format("oid=%d", oid))) {
+            return bidData;
+        }
+
+        return null;
+    }
+
+    public IterableIterator<BidData> getBids() {
+        return db.<BidData>select(BidData.class, "");
+    }
+
+    public Database getDB() {
+        return db;
     }
 }

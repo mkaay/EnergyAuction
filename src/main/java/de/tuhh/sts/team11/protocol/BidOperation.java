@@ -10,19 +10,14 @@ import java.io.Serializable;
  * @since 1/23/14
  */
 public class BidOperation implements Serializable {
-    private final String bidder;
-    private int amount;
+    private final int oid;
 
-    public BidOperation(final String bidder, final int amount) {
-        this.bidder = bidder;
-        this.amount = amount;
+    public BidOperation(final int oid) {
+
+        this.oid = oid;
     }
 
-    public String getBidder() {
-        return bidder;
-    }
-
-    public int getAmount() {
-        return amount;
+    public int getOid() {
+        return oid;
     }
 }

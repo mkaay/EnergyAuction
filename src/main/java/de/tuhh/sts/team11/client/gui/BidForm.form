@@ -10,11 +10,15 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
-      <xy x="20" y="20" width="278" height="141"/>
+      <xy x="20" y="20" width="278" height="196"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -36,7 +40,7 @@
         </constraints>
         <properties>
           <labelFor value="559ef"/>
-          <text value="Price:"/>
+          <text value="Price per unit:"/>
         </properties>
       </component>
       <component id="5d1d1" class="javax.swing.JSpinner" binding="amountSpinner" default-binding="true">
@@ -46,7 +50,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="559ef" class="javax.swing.JSpinner" binding="priceSpinner" default-binding="true">
+      <component id="559ef" class="javax.swing.JSpinner" binding="unitPriceSpinner">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
@@ -55,7 +59,7 @@
       </component>
       <component id="3fe4f" class="javax.swing.JButton" binding="submitButton" default-binding="true">
         <constraints>
-          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -64,11 +68,30 @@
       </component>
       <component id="95f03" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
           <text value="Cancel"/>
+        </properties>
+      </component>
+      <component id="29c82" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <labelFor value="49e2"/>
+          <text value="Price total:"/>
+        </properties>
+      </component>
+      <component id="49e2" class="javax.swing.JSpinner" binding="priceTotalSpinner" default-binding="true">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
         </properties>
       </component>
     </children>

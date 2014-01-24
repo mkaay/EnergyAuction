@@ -20,7 +20,6 @@ public class AuctionData extends Persistent {
     private int priceDelta;
     private int timeDelta;
     private Link<BidData> bids;
-    private BidData winner;
 
     protected AuctionData(final String name, final Integer amount, final Integer price, final Types.AuctionType
             type, final Date startTime, final Date endTime, final Integer priceDelta, final Integer timeDelta) {
@@ -97,14 +96,6 @@ public class AuctionData extends Persistent {
 
     public void setTimeDelta(int timeDelta) {
         this.timeDelta = timeDelta;
-    }
-
-    public void addWinner(final BidData winner) {
-        this.winner = winner;
-    }
-
-    public BidData getWinner() {
-        return winner;
     }
 
     protected void addBid(final BidData bidData) {

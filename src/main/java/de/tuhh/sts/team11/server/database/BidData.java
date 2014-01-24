@@ -17,6 +17,8 @@ public class BidData extends Persistent {
     private final AuctionData auction;
     private final Date time;
     private final UserData user;
+    private boolean evaluated;
+    private boolean won;
 
     protected BidData(int price, int amount, AuctionData auction, Date time, UserData user) {
         this.price = price;
@@ -44,5 +46,21 @@ public class BidData extends Persistent {
 
     public int getAmount() {
         return amount;
+    }
+
+    public boolean isEvaluated() {
+        return evaluated;
+    }
+
+    public void setEvaluated(final boolean evaluated) {
+        this.evaluated = evaluated;
+    }
+
+    public boolean isWon() {
+        return won;
+    }
+
+    public void setWon(final boolean won) {
+        this.won = won;
     }
 }

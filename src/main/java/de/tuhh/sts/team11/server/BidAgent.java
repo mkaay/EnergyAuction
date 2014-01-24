@@ -9,6 +9,7 @@ import de.tuhh.sts.team11.protocol.BidOperation;
 import de.tuhh.sts.team11.protocol.PriceChangedEvent;
 import de.tuhh.sts.team11.protocol.SubscribeOperation;
 import de.tuhh.sts.team11.server.database.AuctionData;
+import de.tuhh.sts.team11.server.database.BidData;
 import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.MessageReceiver;
@@ -29,22 +30,21 @@ import java.io.IOException;
 public class BidAgent extends Agent {
     private static final Logger LOG = Logger.getLogger(BidAgent.class.getName());
 
-    private final AID marketplace = new AID("marketplace", AID.ISLOCALNAME);
     private AuctionData auctionData;
-    private AID userAgent;
     private UserData userData;
     private Integer amount;
     private Integer price;
     private AID auctionAgent;
     private boolean priceAccepted;
+    private BidData bidData;
 
     protected void setup() {
         Object[] args = getArguments();
-        auctionData = (AuctionData) args[0];
-        userAgent = (AID) args[1];
-        userData = (UserData) args[2];
-        amount = (Integer) args[3];
-        price = (Integer) args[4];
+        bidData = (BidData) args[0];
+        auctionData = bidData.getAuction();
+        userData = bidData.getUser();
+        amount = bidData.getAmount();
+        price = bidData.getPrice();
 
         auctionAgent = new AID(String.format("auction_id%d", auctionData.getOid()), AID.ISLOCALNAME);
 
@@ -54,15 +54,20 @@ public class BidAgent extends Agent {
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setType("energy-auction");
-        sd.setName(String.format("bidder_aid%d_uid%d",
-                auctionData.getOid(), userData.getOid()));
+        sd.setName(String.format("bidder_bid%d", bidData.getOid()));
         dfd.addServices(sd);
+
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
 
         ACLMessage message = new ACLMessage(ACLMessage.SUBSCRIBE);
         message.addReceiver(auctionAgent);
         message.setOntology("auction");
         try {
-            message.setContentObject(new SubscribeOperation(userData.getUsername()));
+            message.setContentObject(new SubscribeOperation(bidData.getOid()));
             send(message);
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,7 +111,7 @@ public class BidAgent extends Agent {
         message.addReceiver(auctionAgent);
         message.setOntology("auction");
         try {
-            message.setContentObject(new BidOperation(userData.getUsername(), amount));
+            message.setContentObject(new BidOperation(bidData.getOid()));
             send(message);
         } catch (IOException e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ package de.tuhh.sts.team11.server;
 
 import de.tuhh.sts.team11.protocol.*;
 import de.tuhh.sts.team11.server.database.AuctionData;
+import de.tuhh.sts.team11.server.database.BidData;
 import de.tuhh.sts.team11.server.database.PerstDatabase;
 import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.server.exceptions.UsernameAlreadyTakenException;
@@ -69,8 +70,14 @@ public class MarketplaceAgent extends Agent {
 
     private void restore() {
         for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
-            if (auctionData.getEndTime().after(GregorianCalendar.getInstance().getTime())) {
+            if (auctionData.getEndTime().after(GregorianCalendar.getInstance().getTime()) && auctionData.getAmount()
+                    > 0) {
                 createAuctionAgent(auctionData);
+            }
+        }
+        for (BidData bidData : PerstDatabase.INSTANCE().getBids()) {
+            if (!bidData.isEvaluated()) {
+                createBidAgent(bidData);
             }
         }
     }
@@ -208,7 +215,7 @@ public class MarketplaceAgent extends Agent {
         message.setOntology("auction");
 
         final ListAuctionsReply listAuctionsReply = new ListAuctionsReply();
-        for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
+        for (AuctionData auctionData : PerstDatabase.INSTANCE().getActiveAuctions()) {
             listAuctionsReply.addAuction(auctionData);
         }
 
@@ -245,8 +252,10 @@ public class MarketplaceAgent extends Agent {
 
                     final AuctionData auctionData = PerstDatabase.INSTANCE().getAuctionFromOid(operation
                             .getAuctionData().getOid());
-                    final UserData user = PerstDatabase.INSTANCE().getUser(operation.getUsername());
-                    createBidAgent(message.getSender(), auctionData, user, operation.getAmount(), operation.getPrice());
+                    final UserData userData = PerstDatabase.INSTANCE().getUser(operation.getUsername());
+                    BidData bidData = PerstDatabase.INSTANCE().createBid(operation.getPrice(), operation.getAmount(),
+                            auctionData, userData);
+                    createBidAgent(bidData);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -254,15 +263,13 @@ public class MarketplaceAgent extends Agent {
         }
     }
 
-    private void createBidAgent(final AID userAgent, final AuctionData auctionData, final UserData userData,
-                                final Integer amount, final Integer price) {
-        LOG.info(auctionData.getName());
-        Object[] args = {auctionData, userAgent, userData, amount, price};
+    private void createBidAgent(final BidData bidData) {
+        LOG.info(bidData.getAuction().getName());
+        Object[] args = {bidData};
 
         AgentContainer agentContainer = getContainerController();
         try {
-            AgentController controller = agentContainer.createNewAgent(String.format("bidder_aid%d_uid%d",
-                    auctionData.getOid(), userData.getOid()), "de.tuhh.sts.team11.server.BidAgent", args);
+            AgentController controller = agentContainer.createNewAgent(String.format("bidder_bid%d", bidData.getOid()), "de.tuhh.sts.team11.server.BidAgent", args);
             controller.start();
         } catch (Exception e) {
             e.printStackTrace();

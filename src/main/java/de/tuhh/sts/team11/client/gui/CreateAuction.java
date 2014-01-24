@@ -3,6 +3,8 @@ package de.tuhh.sts.team11.client.gui;
 import de.tuhh.sts.team11.util.Types;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -24,11 +26,12 @@ public class CreateAuction {
     private JTextField nameField;
     private JSpinner amountSpinner;
     private JComboBox typeSelect;
-    private JSpinner priceSpinner;
+    private JSpinner unitPriceSpinner;
     private JSpinner priceDeltaSpinner;
     private JSpinner timeDeltaSpinner;
     private JSpinner endTimeSpinner;
     private JButton createButton;
+    private JSpinner priceTotalSpinner;
 
     private boolean ignoreCloseEvent = false;
 
@@ -53,9 +56,22 @@ public class CreateAuction {
 
         endTimeSpinner.setModel(new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR));
         amountSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
-        priceSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+        unitPriceSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
         priceDeltaSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
         timeDeltaSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+
+        amountSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                recalculatePrice();
+            }
+        });
+        unitPriceSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                recalculatePrice();
+            }
+        });
 
         createButton.addActionListener(new ActionListener() {
             @Override
@@ -75,6 +91,12 @@ public class CreateAuction {
                 }
             }
         });
+    }
+
+    private void recalculatePrice() {
+        int amount = (Integer) amountSpinner.getValue();
+        int unitPrice = (Integer) unitPriceSpinner.getValue();
+        priceTotalSpinner.setValue(amount * unitPrice);
     }
 
     private void closeFrame() {
@@ -105,7 +127,7 @@ public class CreateAuction {
     }
 
     private Integer getPrice() {
-        return (Integer) priceSpinner.getValue();
+        return (Integer) unitPriceSpinner.getValue();
     }
 
     private Date getEndTime() {

@@ -4,6 +4,8 @@ import de.tuhh.sts.team11.protocol.Auction;
 import de.tuhh.sts.team11.util.Types;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -22,9 +24,10 @@ public class BidForm {
     private final Auction auctionData;
     private JPanel contentPane;
     private JSpinner amountSpinner;
-    private JSpinner priceSpinner;
+    private JSpinner unitPriceSpinner;
     private JButton submitButton;
     private JButton cancelButton;
+    private JSpinner priceTotalSpinner;
 
     private boolean ignoreCloseEvent = false;
 
@@ -47,13 +50,26 @@ public class BidForm {
 
         amountSpinner.setModel(new SpinnerNumberModel(auctionData.getAmount(), 0, auctionData.getAmount(), 1));
         if (auctionData.getType() == Types.AuctionType.REVERSE_DUTCH) {
-            priceSpinner.setModel(new SpinnerNumberModel(auctionData.getPrice(), auctionData.getPrice(),
+            unitPriceSpinner.setModel(new SpinnerNumberModel(auctionData.getPrice(), auctionData.getPrice(),
                     Integer.MAX_VALUE, auctionData.getPriceDelta()));
             amountSpinner.setEnabled(false);
         } else {
-            priceSpinner.setModel(new SpinnerNumberModel(auctionData.getPrice(), 1, auctionData.getPrice(),
+            unitPriceSpinner.setModel(new SpinnerNumberModel(auctionData.getPrice(), 1, auctionData.getPrice(),
                     auctionData.getPriceDelta()));
         }
+
+        amountSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                recalculatePrice();
+            }
+        });
+        unitPriceSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                recalculatePrice();
+            }
+        });
 
         frame.setContentPane(contentPane);
         frame.pack();
@@ -68,10 +84,16 @@ public class BidForm {
         });
     }
 
+    private void recalculatePrice() {
+        int amount = (Integer) amountSpinner.getValue();
+        int unitPrice = (Integer) unitPriceSpinner.getValue();
+        priceTotalSpinner.setValue(amount * unitPrice);
+    }
+
     private void submit() {
         closeFrame();
 
-        gui.submitBid(auctionData, (Integer) amountSpinner.getValue(), (Integer) priceSpinner.getValue());
+        gui.submitBid(auctionData, (Integer) amountSpinner.getValue(), (Integer) unitPriceSpinner.getValue());
     }
 
     private void closeFrame() {

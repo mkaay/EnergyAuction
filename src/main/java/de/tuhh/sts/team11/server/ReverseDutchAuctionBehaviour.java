@@ -2,6 +2,7 @@ package de.tuhh.sts.team11.server;
 
 import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.server.database.BidData;
+import de.tuhh.sts.team11.server.database.PerstDatabase;
 
 import java.util.List;
 
@@ -18,7 +19,9 @@ public class ReverseDutchAuctionBehaviour extends AuctionBehaviour {
     protected void changePrice() {
         AuctionData auctionData = getAuctionData();
         auctionData.setPrice(auctionData.getPrice() + auctionData.getPriceDelta());
+        PerstDatabase.INSTANCE().getDB().beginTransaction();
         auctionData.store();
+        PerstDatabase.INSTANCE().getDB().commitTransaction();
     }
 
     @Override
@@ -27,7 +30,12 @@ public class ReverseDutchAuctionBehaviour extends AuctionBehaviour {
         if (bids.size() == 0) {
             return false;
         } else {
-            getAuctionData().addWinner(bids.get(0));
+            getAuctionData().setAmount(0);
+            PerstDatabase.INSTANCE().getDB().beginTransaction();
+            getAuctionData().store();
+            PerstDatabase.INSTANCE().getDB().commitTransaction();
+            getAgent().setWon(bids.get(0));
+            getAgent().setEvaluated(bids.get(0));
             return true;
         }
     }

@@ -2,6 +2,7 @@ package de.tuhh.sts.team11.server;
 
 import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.server.database.BidData;
+import de.tuhh.sts.team11.server.database.PerstDatabase;
 import de.tuhh.sts.team11.util.Logger;
 
 import java.util.List;
@@ -23,7 +24,9 @@ public class DutchAuctionBehaviour extends AuctionBehaviour {
         final int newPrice = auctionData.getPrice() - auctionData.getPriceDelta();
         if (newPrice >= 1) {
             auctionData.setPrice(newPrice);
+            PerstDatabase.INSTANCE().getDB().beginTransaction();
             auctionData.store();
+            PerstDatabase.INSTANCE().getDB().commitTransaction();
         }
     }
 
@@ -35,37 +38,42 @@ public class DutchAuctionBehaviour extends AuctionBehaviour {
         } else if (bids.size() == 1) {
             BidData bidData = bids.get(0);
             if (bidData.getAmount() == getAuctionData().getAmount()) {
-                getAuctionData().addWinner(bidData);
+                PerstDatabase.INSTANCE().getDB().beginTransaction();
                 getAuctionData().setAmount(0);
                 getAuctionData().store();
-                getAgent().notifyWinner(bidData);
+                PerstDatabase.INSTANCE().getDB().commitTransaction();
+                getAgent().setWon(bidData);
                 return true;
             } else if (bidData.getAmount() < getAuctionData().getAmount()) {
-                getAuctionData().addWinner(bidData);
+                PerstDatabase.INSTANCE().getDB().beginTransaction();
                 getAuctionData().setAmount(getAuctionData().getAmount() - bidData.getAmount());
                 getAuctionData().store();
-                getAgent().notifyWinner(bidData);
+                PerstDatabase.INSTANCE().getDB().commitTransaction();
+                getAgent().setWon(bidData);
             } else {
                 LOG.info("Amount too big");
             }
+            getAgent().setEvaluated(bidData);
 
             return false;
         } else {
             for (BidData bidData : bids) {
                 if (bidData.getAmount() == getAuctionData().getAmount()) {
-                    getAuctionData().addWinner(bidData);
-                    getAgent().notifyWinner(bidData);
+                    getAuctionData().setAmount(0);
+                    getAgent().setWon(bidData);
                     return true;
                 } else if (bidData.getAmount() < getAuctionData().getAmount()) {
-                    getAuctionData().addWinner(bidData);
                     getAuctionData().setAmount(getAuctionData().getAmount() - bidData.getAmount());
-                    getAgent().notifyWinner(bidData);
+                    getAgent().setWon(bidData);
                 } else {
                     LOG.info("Amount too big");
                 }
+                getAgent().setEvaluated(bidData);
             }
 
+            PerstDatabase.INSTANCE().getDB().beginTransaction();
             getAuctionData().store();
+            PerstDatabase.INSTANCE().getDB().commitTransaction();
             return false;
         }
     }

@@ -25,10 +25,11 @@ public abstract class AuctionBehaviour extends TickerBehaviour {
 
     @Override
     protected void onTick() {
+        LOG.info(String.format("Evaluating bids for %s", auctionData.getName()));
         if (!evaluteBids()) {
             changePrice();
             agent.priceChanged();
-            LOG.info(String.format("changed price to %d", auctionData.getPrice()));
+            LOG.info(String.format("%s changed price to %d", auctionData.getName(), auctionData.getPrice()));
         }
     }
 

@@ -51,7 +51,7 @@ class AuctionTableModel extends AbstractTableModel {
             case 1:
                 return auction.getAmount();
             case 2:
-                return auction.getPrice();
+                return auction.getPrice() * auction.getAmount();
             case 3:
                 return auction.getType().equals(Types.AuctionType.DUTCH) ? "Dutch" : "Reverse Dutch";
             case 4:

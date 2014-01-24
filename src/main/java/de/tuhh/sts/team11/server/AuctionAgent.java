@@ -11,7 +11,6 @@ import de.tuhh.sts.team11.protocol.SubscribeOperation;
 import de.tuhh.sts.team11.server.database.AuctionData;
 import de.tuhh.sts.team11.server.database.BidData;
 import de.tuhh.sts.team11.server.database.PerstDatabase;
-import de.tuhh.sts.team11.server.database.UserData;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.MessageReceiver;
 import de.tuhh.sts.team11.util.Types;
@@ -37,7 +36,7 @@ import java.util.Map;
 public class AuctionAgent extends Agent {
     private static final Logger LOG = Logger.getLogger(AuctionAgent.class.getName());
     private AuctionData auctionData;
-    private final Map<UserData, AID> subscribed = new HashMap<UserData, AID>();
+    private final Map<Integer, AID> subscribed = new HashMap<Integer, AID>();
     private List<BidData> bids = new LinkedList<BidData>();
 
     private final AID marketplace = new AID("marketplace", AID.ISLOCALNAME);
@@ -112,16 +111,33 @@ public class AuctionAgent extends Agent {
         return bids;
     }
 
-    public void notifyWinner(final BidData bidData) {
+    public void setWon(final BidData bidData) {
         ACLMessage message = new ACLMessage(ACLMessage.INFORM);
         message.setOntology("auction");
-        message.addReceiver(subscribed.get(bidData.getUser()));
+        message.addReceiver(subscribed.get(bidData.getOid()));
         try {
             message.setContentObject(new AuctionWinnerEvent());
             send(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        PerstDatabase.INSTANCE().getDB().beginTransaction();
+        bidData.setEvaluated(true);
+        bidData.setWon(true);
+        bidData.store();
+        PerstDatabase.INSTANCE().getDB().commitTransaction();
+
+        LOG.info(String.format("%s won %d units for %d each in auction %s", bidData.getUser().getUsername(),
+                bidData.getAmount(), bidData.getPrice(), bidData.getAuction().getName()));
+    }
+
+    public void setEvaluated(final BidData bidData) {
+        PerstDatabase.INSTANCE().getDB().beginTransaction();
+        bidData.setEvaluated(true);
+        bidData.store();
+        PerstDatabase.INSTANCE().getDB().commitTransaction();
+        subscribed.remove(bidData.getOid());
     }
 
     class Receiver extends MessageReceiver {
@@ -136,7 +152,7 @@ public class AuctionAgent extends Agent {
 
                 if (message.getPerformative() == ACLMessage.SUBSCRIBE) {
                     SubscribeOperation operation = (SubscribeOperation) content;
-                    subscribed.put(PerstDatabase.INSTANCE().getUser(operation.getUsername()), message.getSender());
+                    subscribed.put(operation.getOid(), message.getSender());
 
                     ACLMessage reply = message.createReply();
                     try {
@@ -148,13 +164,11 @@ public class AuctionAgent extends Agent {
                 } else if (content instanceof BidOperation && message.getPerformative() == ACLMessage.PROPOSE) {
                     BidOperation bidOperation = (BidOperation) content;
                     LOG.info("got bid");
-                    final UserData userData = PerstDatabase.INSTANCE().getUser(bidOperation.getBidder());
-                    if (userData != null) {
-                        BidData bidData = PerstDatabase.INSTANCE().createBid(bidOperation.getAmount(), auctionData,
-                                userData);
+                    final BidData bidData = PerstDatabase.INSTANCE().getBid(bidOperation.getOid());
+                    if (bidData != null) {
                         bids.add(bidData);
                     } else {
-                        LOG.info("invalid user");
+                        LOG.info("invalid bid");
                     }
                 }
             } catch (UnreadableException e) {
