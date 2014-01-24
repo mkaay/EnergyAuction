@@ -52,6 +52,10 @@ public class CreateAuction {
         Date latestDate = calendar.getTime();
 
         endTimeSpinner.setModel(new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR));
+        amountSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+        priceSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+        priceDeltaSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+        timeDeltaSpinner.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 
         createButton.addActionListener(new ActionListener() {
             @Override

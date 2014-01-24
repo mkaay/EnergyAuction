@@ -1,6 +1,7 @@
 package de.tuhh.sts.team11.server;
 
 import de.tuhh.sts.team11.server.database.AuctionData;
+import de.tuhh.sts.team11.util.Logger;
 import jade.core.behaviours.TickerBehaviour;
 
 
@@ -8,6 +9,7 @@ import jade.core.behaviours.TickerBehaviour;
  * Created by mkaay on 14.01.14.
  */
 public abstract class AuctionBehaviour extends TickerBehaviour {
+    private static final Logger LOG = Logger.getLogger(AuctionBehaviour.class.getName());
     private final AuctionAgent agent;
     private final AuctionData auctionData;
 
@@ -26,6 +28,7 @@ public abstract class AuctionBehaviour extends TickerBehaviour {
         if (!evaluteBids()) {
             changePrice();
             agent.priceChanged();
+            LOG.info(String.format("changed price to %d", auctionData.getPrice()));
         }
     }
 

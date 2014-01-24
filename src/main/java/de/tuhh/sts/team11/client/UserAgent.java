@@ -5,20 +5,13 @@ package de.tuhh.sts.team11.client;
  */
 
 import de.tuhh.sts.team11.client.gui.UserGUI;
-import de.tuhh.sts.team11.protocol.CreateAccountOperation;
-import de.tuhh.sts.team11.protocol.CreateAuctionFailedReply;
-import de.tuhh.sts.team11.protocol.CreateAuctionOperation;
-import de.tuhh.sts.team11.protocol.CreateAuctionSuccessReply;
-import de.tuhh.sts.team11.protocol.ListAuctionsOperation;
-import de.tuhh.sts.team11.protocol.ListAuctionsReply;
-import de.tuhh.sts.team11.protocol.LoginFailedReply;
-import de.tuhh.sts.team11.protocol.LoginOperation;
-import de.tuhh.sts.team11.protocol.LoginSuccessReply;
+import de.tuhh.sts.team11.protocol.*;
 import de.tuhh.sts.team11.util.Logger;
 import de.tuhh.sts.team11.util.MessageReceiver;
 import de.tuhh.sts.team11.util.Types;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -39,6 +32,7 @@ public class UserAgent extends Agent {
     private UserGUI userGUI;
 
     private final AID marketplace = new AID("marketplace", AID.ISLOCALNAME);
+    private String username;
 
     protected void setup() {
         LOG.info("Registering UserAgent (" + getAID().getName() + ")");
@@ -60,6 +54,12 @@ public class UserAgent extends Agent {
 
         addBehaviour(new AccountHandler(this));
         addBehaviour(new AuctionHandler(this));
+        addBehaviour(new TickerBehaviour(this, 60000) {
+            @Override
+            protected void onTick() {
+                refreshAuctions();
+            }
+        });
     }
 
     public void login(String username, String password) {
@@ -112,6 +112,26 @@ public class UserAgent extends Agent {
         }
     }
 
+    public void createBidAgent(final Auction auctionData, final Integer amount, final Integer price) {
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        try {
+            msg.setOntology("bid");
+            msg.setContentObject(new CreateBidAgentOperation(auctionData, amount, price, getUsername()));
+            msg.addReceiver(marketplace);
+            send(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     class AccountHandler extends MessageReceiver {
         public AccountHandler(Agent agent) {
             super(agent, ACCOUNT_MESSAGE_TEMPLATE);
@@ -122,6 +142,8 @@ public class UserAgent extends Agent {
             try {
                 final Object content = msg.getContentObject();
                 if (content instanceof LoginSuccessReply && msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+                    LoginSuccessReply reply = (LoginSuccessReply) content;
+                    setUsername(reply.getUsername());
                     userGUI.loginSuccess();
                 } else if (content instanceof LoginFailedReply && msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                     final LoginFailedReply loginFailedReply = (LoginFailedReply) content;
@@ -147,7 +169,6 @@ public class UserAgent extends Agent {
                 if (content instanceof ListAuctionsReply) {
                     LOG.info("Got auctions");
                     ListAuctionsReply reply = (ListAuctionsReply) content;
-                    LOG.info(reply.getAuctions().get(0).getName());
                     userGUI.setAuctionList(reply.getAuctions());
                 } else if (content instanceof CreateAuctionSuccessReply && msg.getPerformative() == ACLMessage
                         .ACCEPT_PROPOSAL) {

@@ -40,11 +40,16 @@ public class AuctionAgent extends Agent {
     private final Map<UserData, AID> subscribed = new HashMap<UserData, AID>();
     private List<BidData> bids = new LinkedList<BidData>();
 
+    private final AID marketplace = new AID("marketplace", AID.ISLOCALNAME);
+
     protected void setup() {
         Object[] args = getArguments();
         auctionData = (AuctionData) args[0];
 
-        if (auctionData.getType().equals(Types.AuctionType.DUTCH)) {
+        LOG.info(String.format("Registering AuctionAgent (%s) for auction '%s'", getAID().getName(),
+                auctionData.getName()));
+
+        if (auctionData.getType() == Types.AuctionType.DUTCH) {
             addBehaviour(new DutchAuctionBehaviour(this, auctionData));
         } else {
             addBehaviour(new ReverseDutchAuctionBehaviour(this, auctionData));
@@ -57,9 +62,6 @@ public class AuctionAgent extends Agent {
             }
         });
         addBehaviour(new Receiver(this));
-
-        LOG.info(String.format("Registering AuctionAgent (%s) for auction '%s'", getAID().getName(),
-                auctionData.getName()));
 
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
@@ -135,8 +137,17 @@ public class AuctionAgent extends Agent {
                 if (message.getPerformative() == ACLMessage.SUBSCRIBE) {
                     SubscribeOperation operation = (SubscribeOperation) content;
                     subscribed.put(PerstDatabase.INSTANCE().getUser(operation.getUsername()), message.getSender());
+
+                    ACLMessage reply = message.createReply();
+                    try {
+                        reply.setContentObject(new PriceChangedEvent(auctionData.getPrice()));
+                        send(reply);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if (content instanceof BidOperation && message.getPerformative() == ACLMessage.PROPOSE) {
                     BidOperation bidOperation = (BidOperation) content;
+                    LOG.info("got bid");
                     final UserData userData = PerstDatabase.INSTANCE().getUser(bidOperation.getBidder());
                     if (userData != null) {
                         BidData bidData = PerstDatabase.INSTANCE().createBid(bidOperation.getAmount(), auctionData,

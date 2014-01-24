@@ -82,7 +82,7 @@ public class PerstDatabase {
     }
 
     public IterableIterator<AuctionData> getAuctions() {
-        return db.getRecords(AuctionData.class);
+        return db.<AuctionData>select(AuctionData.class, "");
     }
 
     public Storage getStorage() {
@@ -98,5 +98,13 @@ public class PerstDatabase {
         auctionData.store();
         db.commitTransaction();
         return bidData;
+    }
+
+    public AuctionData getAuctionFromOid(final Integer oid) {
+        for (AuctionData auctionData : db.<AuctionData>select(AuctionData.class, String.format("oid=%d", oid))) {
+            return auctionData;
+        }
+
+        return null;
     }
 }

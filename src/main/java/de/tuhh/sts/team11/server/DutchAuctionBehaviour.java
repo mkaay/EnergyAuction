@@ -20,8 +20,11 @@ public class DutchAuctionBehaviour extends AuctionBehaviour {
     @Override
     protected void changePrice() {
         AuctionData auctionData = getAuctionData();
-        auctionData.setPrice(auctionData.getPrice() - auctionData.getPriceDelta());
-        auctionData.store();
+        final int newPrice = auctionData.getPrice() - auctionData.getPriceDelta();
+        if (newPrice >= 1) {
+            auctionData.setPrice(newPrice);
+            auctionData.store();
+        }
     }
 
     @Override

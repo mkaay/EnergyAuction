@@ -24,6 +24,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
 import java.io.IOException;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,11 +64,14 @@ public class MarketplaceAgent extends Agent {
 
         addBehaviour(new AccountHandler(this));
         addBehaviour(new AuctionHandler(this));
+        addBehaviour(new BidHandler(this));
     }
 
     private void restore() {
         for (AuctionData auctionData : PerstDatabase.INSTANCE().getAuctions()) {
-            createAuctionAgent(auctionData);
+            if (auctionData.getEndTime().after(GregorianCalendar.getInstance().getTime())) {
+                createAuctionAgent(auctionData);
+            }
         }
     }
 
@@ -161,9 +165,7 @@ public class MarketplaceAgent extends Agent {
                         LOG.info("Creating new auction");
 
                         CreateAuctionOperation o = (CreateAuctionOperation) content;
-                        PerstDatabase.INSTANCE().createAuction(o.getName(), o.getAmount(), o.getPrice(),
-                                o.getAuctionType(), o.getEndTime(), o.getPriceDelta(),
-                                o.getTimeDelta());
+                        createAuction(o);
 
                         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                         reply.setContentObject(new CreateAuctionSuccessReply());
@@ -194,6 +196,13 @@ public class MarketplaceAgent extends Agent {
         }
     }
 
+    private void createAuction(final CreateAuctionOperation o) {
+        AuctionData auctionData = PerstDatabase.INSTANCE().createAuction(o.getName(), o.getAmount(), o.getPrice(),
+                o.getAuctionType(), o.getEndTime(), o.getPriceDelta(),
+                o.getTimeDelta());
+        createAuctionAgent(auctionData);
+    }
+
     private ACLMessage createAuctionListMessage() throws IOException {
         ACLMessage message = new ACLMessage(ACLMessage.INFORM);
         message.setOntology("auction");
@@ -221,4 +230,42 @@ public class MarketplaceAgent extends Agent {
         }
     }
 
+    private class BidHandler extends MessageReceiver {
+        public BidHandler(MarketplaceAgent agent) {
+            super(agent, MessageTemplate.MatchOntology("bid"));
+        }
+
+        @Override
+        protected void handleMessage(final ACLMessage message) {
+            try {
+                Object content = message.getContentObject();
+
+                if (message.getContentObject() instanceof CreateBidAgentOperation) {
+                    CreateBidAgentOperation operation = (CreateBidAgentOperation) content;
+
+                    final AuctionData auctionData = PerstDatabase.INSTANCE().getAuctionFromOid(operation
+                            .getAuctionData().getOid());
+                    final UserData user = PerstDatabase.INSTANCE().getUser(operation.getUsername());
+                    createBidAgent(message.getSender(), auctionData, user, operation.getAmount(), operation.getPrice());
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void createBidAgent(final AID userAgent, final AuctionData auctionData, final UserData userData,
+                                final Integer amount, final Integer price) {
+        LOG.info(auctionData.getName());
+        Object[] args = {auctionData, userAgent, userData, amount, price};
+
+        AgentContainer agentContainer = getContainerController();
+        try {
+            AgentController controller = agentContainer.createNewAgent(String.format("bidder_aid%d_uid%d",
+                    auctionData.getOid(), userData.getOid()), "de.tuhh.sts.team11.server.BidAgent", args);
+            controller.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

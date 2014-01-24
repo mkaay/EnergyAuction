@@ -1,6 +1,6 @@
 package de.tuhh.sts.team11.client.gui;
 
-import de.tuhh.sts.team11.protocol.ListAuctionsReply;
+import de.tuhh.sts.team11.protocol.Auction;
 import de.tuhh.sts.team11.util.Types;
 
 import javax.swing.table.AbstractTableModel;
@@ -15,10 +15,10 @@ import java.util.List;
  * @since 1/23/14
  */
 class AuctionTableModel extends AbstractTableModel {
-    private List<ListAuctionsReply.Auction> auctions = new ArrayList<ListAuctionsReply.Auction>();
+    private List<Auction> auctions = new ArrayList<Auction>();
     private String[] columnNames = {"Name", "Amount", "Price", "Type", "End"};
 
-    public void setAuctions(final List<ListAuctionsReply.Auction> auctions) {
+    public void setAuctions(final List<Auction> auctions) {
         this.auctions = auctions;
         fireTableDataChanged();
     }
@@ -40,7 +40,7 @@ class AuctionTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        ListAuctionsReply.Auction auction = auctions.get(row);
+        Auction auction = auctions.get(row);
         if (auction == null) {
             return "";
         }
@@ -59,5 +59,9 @@ class AuctionTableModel extends AbstractTableModel {
             default:
                 return "";
         }
+    }
+
+    public Auction getAuctionFromRow(int row) {
+        return auctions.get(row);
     }
 }
