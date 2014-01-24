@@ -1,0 +1,6 @@
+Start mit
+ant -f energieauktion.xml run-marketplace
+dann für den useragent
+ant -f energieauktion.xml run-useragent
+für eine zweiten
+ant -f energieauktion.xml run-useragent2
